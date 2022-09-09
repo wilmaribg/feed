@@ -1,8 +1,8 @@
 import { get } from 'lodash'
-import Nodriza from '@/nodriza/src'
+import Nodriza from 'nodriza'
 
-import * as socketIOClient from 'socket.io-client'
-import * as sailsIOClient from 'sails.io.js'
+// import * as socketIOClient from 'socket.io-client'
+// import * as sailsIOClient from 'sails.io.js'
 
 export default {
   install(app, options) {    
@@ -16,13 +16,18 @@ export default {
     
     const nodriza = new Nodriza({ hostname, accessToken, _window: window })
 
+    nodriza.connect()
+    setTimeout(() => {
+      nodriza.emit('authenticate', { accessToken })
+    }, 500)
+
     app.config.globalProperties.$nodriza = nodriza
 
     // window.io = socketIOClient
-    const io = sailsIOClient(socketIOClient)
-    io.sails.transports = ['websocket', 'polling']
-    io.sails.url = 'https://' + hostname
-    io.sails.useCORSRouteToGetCookie = '/app/__getcookie'
+    // const io = sailsIOClient(socketIOClient)
+    // io.sails.transports = ['websocket', 'polling']
+    // io.sails.url = 'https://' + hostname
+    // io.sails.useCORSRouteToGetCookie = '/app/__getcookie'
 
     // window.io = io
 
