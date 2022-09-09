@@ -3,7 +3,9 @@ services:
   web:
     build: .
     container_name: prolibu_feed
-    entrypoint: /docker-entrypoint.sh
+    command: npm run serve
     ports:
-      - "8000:3003"
+      - 3000:3000
+    volumes: 
+      - ./code:/code
     
