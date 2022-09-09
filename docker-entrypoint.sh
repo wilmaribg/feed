@@ -1,3 +1,2 @@
-#!/bin/bash
-ls -l
-# npm install -verbose
+#!/bin/sh
+sh

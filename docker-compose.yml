@@ -1,11 +1,14 @@
 version: "2.2"
 services:
   web:
-    build: .
+    build: 
+      context: .
     container_name: prolibu_feed
     command: npm run serve
-    ports:
-      - 3003:3003
     volumes: 
       - ./code:/code
-    
+    ports:
+      - 3003:3003
+volumes:
+  code: {}
+
