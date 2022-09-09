@@ -5,7 +5,7 @@ services:
     container_name: prolibu_feed
     command: npm run serve
     ports:
-      - 3000:3000
+      - 3003:3003
     volumes: 
       - ./code:/code
     

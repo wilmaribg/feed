@@ -6,4 +6,4 @@ WORKDIR /code
 RUN npm install -g npm@8.19.1
 RUN npm install -g @vue/cli
 RUN vue --version
-EXPOSE 3000
+EXPOSE 3003
