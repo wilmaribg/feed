@@ -1,12 +1,26 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import elementPlus from 'element-plus'
+
+import 'element-plus/dist/index.css'
 
 import App from '@/App.vue'
 import router from '@/router'
-import nodriza from '@/plugins/nodriza'
-// import fakeSession from '@/plugins/fakeSession'
+import filter from '@/filters/filter'
+import pluginNodriza from '@/plugins/pluginNodriza'
+import pluginFakeSession from '@/plugins/pluginFakeSession'
+import Avatar from '@/components/Avatar'
+import Page from '@/components/page/Page'
+
+const pinia = createPinia()
 
 createApp(App)
-  // .use(fakeSession, { mode: process.env.NODE_ENV })
+  .use(pinia)
+  .use(elementPlus)
   .use(router)
-  .use(nodriza, { hostname: 'dev.nodriza.io' })
+  .use(filter)
+  .use(pluginFakeSession, { mode: process.env.NODE_ENV })
+  .use(pluginNodriza, { hostname: 'dev.nodriza.io' })
+  .component('PageComponent', Page)
+  .component('AvatarComponent', Avatar)
   .mount('#app')

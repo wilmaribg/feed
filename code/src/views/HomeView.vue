@@ -1,19 +1,18 @@
+<script setup>
+  import LiveEventsFeed from '@/components/liveEventsFeed/LiveEventsFeed.vue'
+</script>
+
 <template>
-  <InifiniteScroll>
-    <template v-slot:title>
-      <h3>Inifiite Scroll</h3>
+  <PageComponent>
+    <template v-slot:body>
+      <LiveEventsFeed />
     </template>
-  </InifiniteScroll>
+  </PageComponent>
 </template>
 
 <script>
-// @ is an alias to /src
-import InifiniteScroll from '@/components/infiniteScroll/InfiniteScroll.vue'
 
 export default {
-  name: 'HomeView',
-  components: {
-    InifiniteScroll
-  }
+  name: 'HomeView'
 }
 </script>
