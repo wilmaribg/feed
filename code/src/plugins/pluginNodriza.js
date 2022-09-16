@@ -26,7 +26,6 @@ export default {
       sdk.api.user.me((err, me) => {
         if (err) throw new Error(me)
         useProfileStore().setProfile(me)
-        socket.on(String(me.id), data => console.log(data))
       })
     })
 

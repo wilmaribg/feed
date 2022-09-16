@@ -34,6 +34,7 @@ export default {
     display: grid;
     overflow-y: scroll;
     height: 100%;
-    padding: 1rem;
+    margin: 1rem;
+    padding: 1rem 1rem 5rem 1rem;
   }
 </style>

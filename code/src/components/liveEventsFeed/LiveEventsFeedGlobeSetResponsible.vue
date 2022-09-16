@@ -1,18 +1,20 @@
 <script setup>
   import icon from '@/assets/icons/icn-edit.svg'
+  import LiveEventsFeedGlobeMixin from '@/mixins/LiveEventsFeedGlobeMixin.js'
   import LiveEventsFeedGlobe from '@/components/liveEventsFeed/LiveEventsFeedGlobe.vue'
 </script>
 
 <template>
   <LiveEventsFeedGlobe 
-    :icon="icon"
-    :event="event" />
+    :iconSrc="icon"
+    :index="index"
+    :event="event"/>
 </template>
 
 <script>
 export default {
   name: 'LiveEventsFeedOpened',
-  props: ['event']
+  mixins: [LiveEventsFeedGlobeMixin]
 }
 </script>
 

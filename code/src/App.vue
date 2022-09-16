@@ -10,4 +10,8 @@
   $enable-cssgrid: true;
   @import 'bootstrap/scss/bootstrap.scss';
   @import '@/assets/styles.scss';
+
+  pre {
+    color: white;
+  }
 </style>

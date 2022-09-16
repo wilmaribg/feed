@@ -30,10 +30,11 @@ const getItemByMethod = method => {
       <AvatarComponent width="5.1rem" height="5.1rem" :src="get(group, 'avatar', 'does not exists')"/>
     </div>
     <div class="live-events-feed-group--info">
-      <template v-for="event in $filters.sortByDate(events, 'updatedAt')" v-bind:key="event.id">
-        <template v-if="group.id == get(event, 'docId')">
-          <component :is="getItemByMethod(event.method)" :event="event"/>
-        </template>
+      <template v-for="(event, index) in $filters.sortByDate(events, 'updatedAt', -1)" v-bind:key="event.id">
+        <component 
+          :index="index"
+          :event="event"
+          :is="getItemByMethod(event.method)"/>
       </template>
     </div>
   </div>
@@ -49,9 +50,19 @@ export default {
 
 <style scoped lang="scss">
   .live-events-feed-group {
+    gap: 1rem;
     display: grid;
     grid-template-columns: 1fr 12fr;
     background: rgba(0, 0, 0, .005);
-    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 2rem;
+  }
+  .live-events-feed-group--avatar {
+    text-align: center; 
+  }
+  .live-events-feed-group--info {
+    position: relative;
   }
 </style>
+
+

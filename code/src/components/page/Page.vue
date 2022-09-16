@@ -18,7 +18,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  $header-height: 7.6rem;
+  $header-height: 8rem;
   
   .page--wrapper {
     height: 100vh;  

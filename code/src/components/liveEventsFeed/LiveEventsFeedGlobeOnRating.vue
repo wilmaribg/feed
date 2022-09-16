@@ -2,6 +2,7 @@
   import { get } from 'lodash'
   import iconHot from '@/assets/icons/icn-hot.svg'
   import iconWarm from '@/assets/icons/icn-warm.svg'
+  import LiveEventsFeedGlobeMixin from '@/mixins/LiveEventsFeedGlobeMixin.js'
   import LiveEventsFeedGlobe from '@/components/liveEventsFeed/LiveEventsFeedGlobe.vue'
 
   const getIcon = (event) => {
@@ -13,14 +14,15 @@
 
 <template>
   <LiveEventsFeedGlobe 
-    :icon="getIcon(event)"
-    :event="event" />
+    :iconSrc="getIcon(event)"
+    :index="index"
+    :event="event"/>
 </template>
 
 <script>
 export default {
   name: 'LiveEventsFeedOpened',
-  props: ['event']
+  mixins: [LiveEventsFeedGlobeMixin]
 }
 </script>
 
