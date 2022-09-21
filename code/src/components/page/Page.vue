@@ -30,7 +30,7 @@ export default {
       height: $header-height;
     }
     .page--wrapper-body {
-      height: calc(100vh - $header-height);
+      height: calc(100vh - ($header-height + 0rem));
       background: linear-gradient(0deg, rgba(85,207,250,0.10) 40%, rgba(255,86,55,0.10) 100%);
       // background: white;
     }

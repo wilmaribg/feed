@@ -8,6 +8,7 @@ import App from '@/App.vue'
 import router from '@/router'
 import filter from '@/filters/filter'
 import pluginNodriza from '@/plugins/pluginNodriza'
+import pluginEmitter from '@/plugins/pluginEmitter'
 import pluginFakeSession from '@/plugins/pluginFakeSession'
 import Avatar from '@/components/Avatar'
 import Page from '@/components/page/Page'
@@ -19,6 +20,7 @@ createApp(App)
   .use(elementPlus)
   .use(router)
   .use(filter)
+  .use(pluginEmitter)
   .use(pluginFakeSession, { mode: process.env.NODE_ENV })
   .use(pluginNodriza, { hostname: 'dev.nodriza.io' })
   .component('PageComponent', Page)

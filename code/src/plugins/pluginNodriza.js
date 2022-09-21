@@ -24,7 +24,7 @@ export default {
       console.log('💡 Socket connect')
       socket.emit('authenticate', { accessToken })
       sdk.api.user.me((err, me) => {
-        if (err) throw new Error(me)
+        if (err) return console.error(err)
         useProfileStore().setProfile(me)
       })
     })

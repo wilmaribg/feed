@@ -10,10 +10,7 @@
       </el-icon>
     </span>
     <template #dropdown>
-      <el-dropdown-menu>
-        <el-dropdown-item>See All</el-dropdown-item>
-        <el-dropdown-item divided disabled>Action 5</el-dropdown-item>
-      </el-dropdown-menu>
+      <slot name="actions"></slot>
     </template>
   </el-dropdown>
 </template>

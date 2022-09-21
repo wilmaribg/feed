@@ -1,0 +1,39 @@
+.live-events-feed-group--animate-in {
+  animation-duration: .250s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in;
+  animation-name: live-events-feed-group--animate-in;
+  transform: scale(1);
+}
+
+.live-events-feed-group--animate-out {
+  animation-duration: .250s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in;
+  animation-name: live-events-feed-group--animate-out;
+  transform: scale(0);
+}
+
+@keyframes live-events-feed-group--animate-in {
+  0% {
+    transform: scale(0);
+  }
+  25% {
+    transform: scale(.3);
+  }
+  75% {
+    transform: scale(.5);
+  }
+}
+
+@keyframes live-events-feed-group--animate-out {
+  0% {
+    transform: scale(.5);
+  }
+  25% {
+    transform: scale(.3);
+  }
+  75% {
+    transform: scale(0);
+  }
+}

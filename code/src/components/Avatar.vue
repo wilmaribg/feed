@@ -1,6 +1,6 @@
 <template>
   <div class="avatar--container">
-    <img :src="src" :style="{ width, height }" alt="avatar">
+    <img :src="src"  :style="{ width, height }" alt="avatar">
   </div>
 </template>
 

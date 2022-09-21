@@ -1,82 +1,112 @@
 <script setup>
   import { get } from 'lodash'
   import moment from 'moment'
+  import { ref, onMounted, onUnmounted, defineProps } from 'vue'
+  import { $emitter as pluginEmitter } from '@/plugins/pluginEmitter.js'
   import LiveEventsFeedMenu from '@/components/liveEventsFeed/LiveEventsFeedMenu.vue'
 
+  const props = defineProps({
+    msController: Object,
+    iconSrc: String,
+    ocolor: String,
+    event: {
+      type: Object,
+      required: true
+    },
+    index: {
+      type: Number,
+      default: () => 0
+    },
+    background: {
+      type: String,
+      default: () => '#000000'
+    },
+    color: {
+      type: String,
+      default: () => '#ffffff'
+    }
+  })
+  
+  const isOpen = ref(false)
+  const interval = ref(null)
+  const eventName = 'openFeedGroup'
+  const dateFromNow = ref(moment(props.event.updatedAt).fromNow())
+
   const getClass = index => {
-    if (index == 0) return 'live-events-feed-item--front'
+    const frontClass = 'live-events-feed-item--front'
+    if (isOpen.value) return frontClass
+    if (index == 0) return frontClass
     return `live-events-feed-item--back-${index} live-events-feed-item--back-close`
   }
+
+  onUnmounted(() => {
+    isOpen.value = false
+    pluginEmitter.off(eventName)
+    clearInterval(interval.value)
+  })
+
+  onMounted(() => {
+    interval.value = setInterval(() => { 
+      dateFromNow.value = moment(props.event.updatedAt).fromNow()
+    }, 10000)
+    pluginEmitter.on(eventName, groupId => {
+      const docId = get(props, 'event.docId')
+      if (groupId != docId) return 
+      isOpen.value = !isOpen.value
+    })
+  })
 </script>
 
 <template>
   <div 
-    :style="{ background }" 
-    :class="getClass(index)"
+    :style="{ background: props.background }" 
+    :class="getClass(props.index)"
     class="live-events-feed-item">
     <section>
       <section class="live-events-feed-item--time">
-        {{ $filters.fullName(event, 'data.user') }} - 
-        {{ moment(event.updatedAt).format('MMM D [at] hh:mma') }} 
+        {{ $filters.fullName(props.event, 'data.user') }} - 
+        {{ moment(props.event.updatedAt).format('MMM D [at] hh:mma') }} 
         ({{dateFromNow}})
       </section>
       <section class="live-events-feed-item--information">
         <img :src="iconSrc" alt="icon" class="live-events-feed-item--information-icon">
         <section class="live-events-feed-item--information-display">
-          <span :style="{ color }">
-            {{ get(event, 'data.display') }}
+          <span :style="{ color: props.color }">
+            {{ get(props.event, 'data.display') }}
           </span>
           <span 
-            :style="{ color: (ocolor || color) }"
+            :style="{ color: (props.ocolor || props.color) }"
             class="live-events-feed-item--information-display--observation">
             Client: BMW - Total: $2.500 USD - Heat: COLD - Interest: 0 Pnts - 0 Views
           </span>
         </section>
       </section>
       <section class="live-events-feed-item--information-observation">
-        <span>{{ get(event, 'data.observation') || '---'}}</span>
+        <span>{{ get(props.event, 'data.observation') || '---'}}</span>
       </section>
     </section>
     <section class="live-events-feed-item--menu">
-      <LiveEventsFeedMenu />
+      <LiveEventsFeedMenu>
+        <template #actions>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="$emitter.emit(eventName, get(event, 'docId'))">
+              {{ isOpen ? 'Close' : 'Open' }}
+            </el-dropdown-item>
+            <el-dropdown-item divided disabled>
+              Delete
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </LiveEventsFeedMenu>
     </section>
   </div>
 </template>
 
 <script>
+
+
 export default {
-  name: 'LiveEventsFeedOpened',
-  props: {
-    iconSrc: String,
-    ocolor: String,
-    event: {
-      type: Object,
-      required: true
-    }, 
-    index: {
-      type: Number,
-      default() {
-        return 0
-      }
-    },
-    background: {
-      type: String,
-      default() {
-        return '#000000'
-      }
-    },
-    color: {
-      type: String,
-      default() {
-        return '#ffffff'
-      }
-    },
-  },
-  computed: {
-    dateFromNow() {
-      return moment(this.event.updatedAt).fromNow()
-    }
-  }
+  name: 'LiveEventsFeedOpened'
 }
 </script>
 
@@ -159,5 +189,8 @@ export default {
         font-size: 1.12rem;
       }
     }
+  }
+  .live-events-feed-group--show >>> .live-events-feed-item {
+    position: relative !important;
   }
 </style>
