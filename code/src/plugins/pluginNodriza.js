@@ -3,6 +3,7 @@ import Nodriza from 'nodriza'
 import * as io from 'socket.io-client'
 
 import { useProfileStore } from '@/store/profile'
+import { $emitter } from '@/plugins/pluginEmitter.js'
 
 export default {
   install(app, options) {    
@@ -26,6 +27,13 @@ export default {
       sdk.api.user.me((err, me) => {
         if (err) return console.error(err)
         useProfileStore().setProfile(me)
+        console.log('👂 Socket listen ----->', String(me.id))
+        socket.on(String(me.id), event => {
+          console.log('roge event ---->', event)
+          const onSocket = 'onSocket'
+          $emitter.off(onSocket, event)
+          $emitter.emit(onSocket, event)
+        })
       })
     })
 

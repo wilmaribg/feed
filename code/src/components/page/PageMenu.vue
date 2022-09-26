@@ -1,5 +1,6 @@
 <script setup>
   import { MoreFilled } from '@element-plus/icons-vue'  
+  import SettingsLiveEventsFeed from '@/components/settings/SettingsLiveEventsFeed'
 </script>
 
 <template>
@@ -11,7 +12,9 @@
     </span>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item>Action 1</el-dropdown-item>
+        <el-dropdown-item>
+          <SettingsLiveEventsFeed link-text="Settings"/>
+        </el-dropdown-item>
         <el-dropdown-item>Action 2</el-dropdown-item>
         <el-dropdown-item>Action 3</el-dropdown-item>
         <el-dropdown-item disabled>Action 4</el-dropdown-item>

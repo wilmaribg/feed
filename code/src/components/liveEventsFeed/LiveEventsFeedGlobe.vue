@@ -1,88 +1,42 @@
-<script setup>
-  import { get } from 'lodash'
-  import moment from 'moment'
-  import { ref, onMounted, onUnmounted, defineProps } from 'vue'
-  import { $emitter as pluginEmitter } from '@/plugins/pluginEmitter.js'
-  import LiveEventsFeedMenu from '@/components/liveEventsFeed/LiveEventsFeedMenu.vue'
-
-  const props = defineProps({
-    msController: Object,
-    iconSrc: String,
-    ocolor: String,
-    event: {
-      type: Object,
-      required: true
-    },
-    index: {
-      type: Number,
-      default: () => 0
-    },
-    background: {
-      type: String,
-      default: () => '#000000'
-    },
-    color: {
-      type: String,
-      default: () => '#ffffff'
-    }
-  })
-  
-  const isOpen = ref(false)
-  const interval = ref(null)
-  const eventName = 'openFeedGroup'
-  const dateFromNow = ref(moment(props.event.updatedAt).fromNow())
-
-  const getClass = index => {
-    const frontClass = 'live-events-feed-item--front'
-    if (isOpen.value) return frontClass
-    if (index == 0) return frontClass
-    return `live-events-feed-item--back-${index} live-events-feed-item--back-close`
-  }
-
-  onUnmounted(() => {
-    isOpen.value = false
-    pluginEmitter.off(eventName)
-    clearInterval(interval.value)
-  })
-
-  onMounted(() => {
-    interval.value = setInterval(() => { 
-      dateFromNow.value = moment(props.event.updatedAt).fromNow()
-    }, 10000)
-    pluginEmitter.on(eventName, groupId => {
-      const docId = get(props, 'event.docId')
-      if (groupId != docId) return 
-      isOpen.value = !isOpen.value
-    })
-  })
-</script>
-
 <template>
   <div 
     :style="{ background: props.background }" 
     :class="getClass(props.index)"
     class="live-events-feed-item">
     <section>
-      <section class="live-events-feed-item--time">
+      <section 
+        :style="{ color: props.tColor }" 
+        class="live-events-feed-item--time">
         {{ $filters.fullName(props.event, 'data.user') }} - 
         {{ moment(props.event.updatedAt).format('MMM D [at] hh:mma') }} 
         ({{dateFromNow}})
       </section>
       <section class="live-events-feed-item--information">
-        <img :src="iconSrc" alt="icon" class="live-events-feed-item--information-icon">
+        <section class="live-events-feed-item--information-images">
+          <img 
+            :src="iconSrc" 
+            alt="icon" 
+            class="live-events-feed-item--information-icon">
+          <LottiesConfettiDocs 
+            v-if="!isEmpty(props.lottieAnimationData)"
+            style="--lottie-confetti-docs--width: 200px;"
+            :animationData="props.lottieAnimationData"/>
+        </section>
         <section class="live-events-feed-item--information-display">
-          <span :style="{ color: props.color }">
+          <span 
+            :style="{ color: props.color }" 
+            class="live-events-feed-item--information-display-text">
             {{ get(props.event, 'data.display') }}
           </span>
           <span 
-            :style="{ color: (props.ocolor || props.color) }"
+            :style="{ color: props.oColor }"
             class="live-events-feed-item--information-display--observation">
-            Client: BMW - Total: $2.500 USD - Heat: COLD - Interest: 0 Pnts - 0 Views
+            {{ get(props.event, 'data.resume') || '---' }}
           </span>
         </section>
       </section>
       <section class="live-events-feed-item--information-observation">
-        <span>{{ get(props.event, 'data.observation') || '---'}}</span>
+        <span>{{ get(props.event, 'data.observation') || '---' }}</span>
       </section>
     </section>
     <section class="live-events-feed-item--menu">
@@ -102,13 +56,86 @@
   </div>
 </template>
 
-<script>
+<script setup>
+  import { get, isEmpty } from 'lodash'
+  import moment from 'moment'
+  import { ref, onMounted, onUnmounted, defineProps } from 'vue'
+  import { useAppStore } from '@/store/app'
+  import { $emitter as pluginEmitter } from '@/plugins/pluginEmitter.js'
+  import LottiesConfettiDocs from '@/components/lotties/LottiesConfettiDocs.vue'
+  import LiveEventsFeedMenu from '@/components/liveEventsFeed/LiveEventsFeedMenu.vue'
 
+  const appStore = useAppStore()
 
-export default {
-  name: 'LiveEventsFeedOpened'
-}
+  const props = defineProps({
+    tone: String,
+    lottieAnimationData: Object,
+    msController: Object,
+    iconSrc: String,
+    event: {
+      type: Object,
+      required: true
+    },
+    index: {
+      type: Number,
+      default: () => 0
+    },
+    background: {
+      type: String,
+      default: () => '#000000'
+    },
+    color: {
+      type: String,
+      default: () => '#ffffff'
+    },
+    oColor: {
+      type: String,
+      default: () => '#ffffff'
+    },
+    tColor: {
+      type: String,
+      default: () => '#ffffff'
+    }
+  })
+
+  const isOpen = ref(false)
+  const interval = ref(null)
+  const eventName = 'openFeedGroup'
+  const dateFromNow = ref(moment(props.event.updatedAt).fromNow())
+
+  const getClass = index => {
+    const frontClass = 'live-events-feed-item--front'
+    if (isOpen.value) return frontClass
+    if (index == 0) return frontClass
+    return `live-events-feed-item--back-${index} live-events-feed-item--back-close`
+  }
+
+  onUnmounted(() => {
+    isOpen.value = false
+    pluginEmitter.off(eventName)
+    clearInterval(interval.value)
+  })
+
+  onMounted(() => {
+    if (props.tone && props.event.source == 'socket' && !appStore.mute) {
+      new Audio(props.tone).play()
+    }
+    interval.value = setInterval(() => { 
+      dateFromNow.value = moment(props.event.updatedAt).fromNow()
+    }, 10000)
+    pluginEmitter.on(eventName, groupId => {
+      const docId = get(props, 'event.docId')
+      if (groupId != docId) return 
+      isOpen.value = !isOpen.value
+    })
+  })
 </script>
+
+<style>
+  :root {
+    --live-events-feed-item--display-color: #ffffff;
+  }
+</style>
 
 <style scoped lang="scss">
   @use "sass:math";
@@ -178,6 +205,9 @@ export default {
     grid-template-columns: 1fr 48fr;
     gap: 1rem;
     align-items: center;
+    &-images {
+      position: relative;
+    }
     &-icon {
       width: 2.6rem;
     }
@@ -185,6 +215,9 @@ export default {
       display: flex;
       flex-direction: column;
       line-height: 1.5;
+      &-text {
+        color: var(--live-events-feed-item--display-color);
+      }
       &--observation {
         font-size: 1.12rem;
       }
@@ -192,5 +225,16 @@ export default {
   }
   .live-events-feed-group--show >>> .live-events-feed-item {
     position: relative !important;
+  }
+
+  .lottie--confetti-docs {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
   }
 </style>

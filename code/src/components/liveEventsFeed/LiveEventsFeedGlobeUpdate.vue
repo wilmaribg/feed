@@ -5,7 +5,8 @@
 </script>
 
 <template>
-  <LiveEventsFeedGlobe 
+  <LiveEventsFeedGlobe
+    oColor="#ffffff" 
     :iconSrc="icon"
     :index="index"
     :event="event"/>

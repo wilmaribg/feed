@@ -1,17 +1,6 @@
-<script setup>
-  import { ref } from 'vue'
-  import { get } from 'lodash'
-  import { useProfileStore } from '@/store/profile'
-  import PageMenuComponent from '@/components/page/PageMenu'
-
-  const profileStore = useProfileStore()
-  const company = ref(get(profileStore, 'profile.company.name'))
-  const fullName = ref(get(profileStore, 'profile.fullName'))
-</script>
-
 <template>
   <nav class="navbar">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="/">
       <img 
         src="@/assets/img/black-logo-mark.svg" 
         alt="logo" 
@@ -20,6 +9,15 @@
       Real-time Activity Feed
     </a>
     <div class="d-flex">
+      <!-- <div>
+        <el-switch 
+          v-model="mute" 
+          @change="appStore.setMute(mute)"
+          style="--el-switch-on-color: #ff4949; --el-switch-off-color: #13ce66"
+          size="large"
+          active-text="Mute" 
+          inactive-text="Sound"/>
+      </div> -->  
       <div class="navbar--profile">
         <span class="navbar--profile-company">{{company}}</span>
         <span class="navbar--profile-fullname">{{fullName}}</span>
@@ -30,10 +28,15 @@
   </nav>
 </template>
 
-<script>
-export default {
-  name: 'HeaderComponent'
-}
+<script setup>
+  import { ref } from 'vue'
+  import { get } from 'lodash'
+  import { useProfileStore } from '@/store/profile'
+  import PageMenuComponent from '@/components/page/PageMenu'
+
+  const profileStore = useProfileStore()
+  const fullName = ref(get(profileStore, 'profile.fullName'))
+  const company = ref(get(profileStore, 'profile.company.name'))
 </script>
 
 <style scoped lang="scss">
@@ -42,6 +45,7 @@ export default {
     padding: 1.75rem;
     font-weight: 400;
     .navbar-brand {
+      cursor: pointer;
       color: white;
       font-size: 2rem;
       display: inline-flex;

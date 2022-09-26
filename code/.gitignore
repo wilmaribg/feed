@@ -2,6 +2,8 @@
 nodriza
 node_modules
 /dist
+/report-feed
+/outputDir
 
 
 # local env files

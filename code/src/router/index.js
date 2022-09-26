@@ -1,11 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import PreloaderView from '@/views/PreloaderView.vue'
+import LiveActivityFeed from '@/views/LiveActivityFeed.vue'
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'preloaderView',
+    component: PreloaderView
+  },
+  {
+    path: '/live-activity-feed',
+    name: 'LiveActivityFeed',
+    component: LiveActivityFeed
   },
   {
     path: '/about',

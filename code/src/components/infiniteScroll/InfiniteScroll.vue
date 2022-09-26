@@ -1,6 +1,7 @@
 <template>
   <div :id="selector" class="infiniteScroll-container">
     <slot name="body" 
+      :moveToBottom="moveToBottom" 
       :msController="msController" 
       :test="test"/>
   </div>
@@ -14,18 +15,23 @@ import { Controller } from 'scrollmagic'
 export default {
   name: 'InifinteScroll',
   emits: ['onEnd'],
-  props: ['moveToEnd'],
-  setup(props, context) {
+  setup() {
     const selector = uuidv4()
+    const isScrollEnd = ref(true)
     const msController = ref(Controller)
 
+    const moveToBottom = () => {
+      console.log('roge moveToBottom ----->', isScrollEnd.value)
+      if (!isScrollEnd.value) return
+      const element = document.getElementById(selector)
+      element.scrollTop = element.scrollHeight
+    }
     
     onMounted(() => {
       const element = document.getElementById(selector)
       element.scrollTop = element.scrollHeight
       element.addEventListener('scroll', ({ target }) => {
-        const isScrollEnd = target.scrollTop + target.clientHeight >= target.scrollHeight
-        context.emit('onScroll', isScrollEnd)
+        isScrollEnd.value = target.scrollTop + target.clientHeight >= target.scrollHeight
       })
       msController.value = new Controller({ 
         loglevel: 0, 
@@ -33,7 +39,7 @@ export default {
       })
     })
 
-    return { selector, msController }
+    return { selector, msController, moveToBottom }
   }
 }
 </script>

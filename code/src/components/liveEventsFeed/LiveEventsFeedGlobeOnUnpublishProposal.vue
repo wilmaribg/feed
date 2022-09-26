@@ -6,6 +6,7 @@
 
 <template>
   <LiveEventsFeedGlobe 
+    tone="/sounds/achivement.mp3"
     :iconSrc="icon"
     :index="index"
     :event="event"/>
