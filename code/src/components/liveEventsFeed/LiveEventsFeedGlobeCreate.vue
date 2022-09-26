@@ -6,7 +6,7 @@
 
 <template>
   <LiveEventsFeedGlobe 
-    tone="/sounds/news.mp3"
+    tone="/sounds/click.mp3"
     color="#4285f4"
     :iconSrc="icon"
     :index="index"
