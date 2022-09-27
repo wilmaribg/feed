@@ -5,7 +5,10 @@
   "scripts": {
     "serve": "vue-cli-service serve --mode development",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.9",
@@ -21,7 +24,7 @@
     "socket.io-client": "^1.7.3",
     "tiny-emitter": "^2.1.0",
     "uuid": "^9.0.0",
-    "vue": "^3.2.13",
+    "vue": "^3.2.39",
     "vue-router": "^4.1.5",
     "vue3-lottie": "^2.3.0"
   },
@@ -34,7 +37,8 @@
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
-    "sass-loader": "^13.0.2"
+    "sass-loader": "^13.0.2",
+    "vitepress": "^1.0.0-alpha.17"
   },
   "eslintConfig": {
     "root": true,
