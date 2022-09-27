@@ -12,7 +12,9 @@ export default {
       },
       {
         text: 'Components',
-        items: []
+        items: [
+          { text: 'Avatar', link: '/ComponentAvatar' },
+        ]
       }
     ]
   }
