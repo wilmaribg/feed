@@ -22,11 +22,11 @@
     if (/approved/gi.test(display)) return 'rgb(57,181,74)'
   }
   
-  const getTone = event => {
+  const getTone = (event, $publicPath) => {
     const display = get(event, 'data.display')
-    if (/ready/gi.test(display)) return '/sounds/ready.mp3'
-    if (/denied/gi.test(display)) return '/sounds/denied.mp3'
-    if (/approved/gi.test(display)) return '/sounds/approved-1.mp3'
+    if (/ready/gi.test(display)) return $publicPath + '/sounds/ready.mp3'
+    if (/denied/gi.test(display)) return $publicPath + '/sounds/denied.mp3'
+    if (/approved/gi.test(display)) return $publicPath + '/sounds/approved-1.mp3'
   }
 
   const getIcon = event => {
@@ -63,7 +63,7 @@
     :tColor="getTcolor(event)"
     :iconSrc="getIcon(event)"
     :color="getColor(event)"
-    :tone="getTone(event)"
+    :tone="getTone(event, $publicPath)"
     :index="index"
     :background="getBackground(event)"
     :event="event"/>

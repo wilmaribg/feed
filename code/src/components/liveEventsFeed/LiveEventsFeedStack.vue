@@ -1,14 +1,17 @@
 <template>
-  <div :id="selector" :class="{'live-events-feed-group--show': isSeenAll }" class="live-events-feed-group">
-    <div class="live-events-feed-group--avatar">
+  <div 
+    :id="id" 
+    :class="{'feed-group--open': isCollapse}"
+    class="feed-group">
+    <div class="feed-groupAvatar">
       <AvatarComponent width="5.1rem" height="5.1rem" :src="get(group, 'avatar', 'does not exists')"/>
     </div>
-    <div class="live-events-feed-group--info">
+    <div class="feed-groupInfo">
       <template v-for="(event, index) in $filters.sortByDate(events, 'updatedAt', -1)" v-bind:key="event.id">
         <component 
           :index="index"
           :event="event"
-          @onSeeAll="onSeeAll"
+          @onCollapse="onCollapse"
           :msController="$props.msController"
           :is="getItemByMethod(event.method)"/>
       </template>
@@ -18,7 +21,6 @@
 
 <script>
 import { get } from 'lodash'
-// import { Scene } from 'scrollmagic'
 import { v4 as uuidv4 } from 'uuid'
 import { onMounted, ref } from 'vue'
 
@@ -49,53 +51,50 @@ export default {
     }
   },
   setup(props, context) {
-    const selector = uuidv4()
-    const isSeenAll = ref(false)
+    const id = uuidv4()
+    const isCollapse = ref(false)
     
-    const onSeeAll = () => {
-      isSeenAll.value = true
+    const onCollapse = (_isCollapse) => {
+      isCollapse.value = _isCollapse
+      document.getElementById(id).scrollIntoView({ 
+        // behavior: 'smooth',
+        // block: isOpen ? 'end' : 'start', 
+        // block: 'start', 
+      })
     }
   
     onMounted(() => {
       context.emit('onMounted')
-    //   if (props.msController) {
-    //     const triggerElement = document.getElementById(selector)
-    //     const scene = new Scene({ 
-    //       triggerElement,
-    //       reverse: false,
-    //       triggerHook: 1,
-    //       offset: 10
-    //     })
-    //     scene.on('enter', () => {
-    //       // triggerElement.classList.add('live-events-feed-group--animate-in')
-    //       // triggerElement.classList.remove('live-events-feed-group--animate-out')
-    //     })
-    //     scene.on('leave', () => {
-    //       // triggerElement.classList.add('live-events-feed-group--animate-out')
-    //       // triggerElement.classList.remove('live-events-feed-group--animate-in')
-    //     })
-    //     scene.addTo(props.msController)
-    //   }
     })
-    return { selector, isSeenAll, onSeeAll }
+
+    return { id, onCollapse, isCollapse }
   }
 }
 </script>
 
 <style scoped lang="scss">
   @import '@/assets/styles/stylesAnimationsLiveEventsFeedIn.scss';
-  .live-events-feed-group {
+  .feed-group {
     gap: 1rem;
     display: grid;
     grid-template-columns: 1fr 12fr;
     background: rgba(0, 0, 0, .005);
-    margin-bottom: 1rem;
-    padding-bottom: 2rem;
+    &--open {
+      .feed-groupInfo {
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
+        padding: 1rem 1rem 0 1rem;
+        background: rgba(225, 225, 255, 0.1);
+        :deep(.raf-bubbleBack) {
+          opacity: 0.75;
+        }
+      }
+    }
   }
-  .live-events-feed-group--avatar {
+  .feed-groupAvatar {
     text-align: center; 
   }
-  .live-events-feed-group--info {
+  .feed-groupInfo {
     position: relative;
   }
 </style>

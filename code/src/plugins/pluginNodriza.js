@@ -15,7 +15,7 @@ export default {
 
     accessToken = get(session, 'token.accessToken', null)
     
-    const socket = io('https://dev.nodriza.io:3000/')
+    const socket = io(`https://${hostname}:3000/`)
     const sdk = new Nodriza({ hostname, accessToken, _window: window })
 
     socket.on('error', (err) => console.log('❌ Socket error', err))

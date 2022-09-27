@@ -2,9 +2,12 @@
 /code/src/nodriza
 node_modules
 /dist
+/report-feed
 
 
 # local env files
+
+.env
 .env.local
 .env.*.local
 fakeSession.json

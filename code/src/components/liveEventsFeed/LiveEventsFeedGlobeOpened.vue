@@ -4,17 +4,17 @@
   import LiveEventsFeedGlobeMixin from '@/mixins/LiveEventsFeedGlobeMixin.js'
   import LiveEventsFeedGlobe from '@/components/liveEventsFeed/LiveEventsFeedGlobe.vue'
 
-  const getTone = event => {
+  const getTone = (event, $publicPath) => {
     const display = get(event, 'data.display')
-    if (/by 1 time/gi.test(display)) return '/sounds/first-seen.mp3'
-    return '/sounds/first-seen.mp3'
+    if (/by 1 time/gi.test(display)) return $publicPath + '/sounds/first-seen.mp3'
+    return $publicPath + '/sounds/first-seen.mp3'
   }
 </script>
 
 <template>
   <LiveEventsFeedGlobe 
     oColor="#ffffff"
-    :tone="getTone(event)"
+    :tone="getTone(event, $publicPath)"
     :iconSrc="icon"
     :index="index"
     :event="event"/>

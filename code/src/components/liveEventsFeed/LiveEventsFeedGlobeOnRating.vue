@@ -12,10 +12,10 @@
     return iconWarm
   }
 
-  const getTone = event => {
+  const getTone = (event, $publicPath) => {
     const display = get(event, 'data.display')
-    if (/hot/gi.test(display)) return '/sounds/hot.mp3'
-    if (/warm/gi.test(display)) return '/sounds/warm.mp3'
+    if (/hot/gi.test(display)) return $publicPath + '/sounds/hot.mp3'
+    if (/warm/gi.test(display)) return $publicPath + '/sounds/warm.mp3'
   }
 
   const getLottie = event => {
@@ -46,7 +46,7 @@
     :oColor="getColor(event)"
     :tColor="getTcolor(event)"
     :iconSrc="getIcon(event)"
-    :tone="getTone(event)"
+    :tone="getTone(event, $publicPath)"
     :index="index"
     :event="event"/>
 </template>

@@ -1,71 +1,100 @@
 <template>
   <div 
-    :style="{ background: props.background }" 
-    :class="getClass(props.index)"
-    class="live-events-feed-item">
-    <section>
-      <section 
-        :style="{ color: props.tColor }" 
-        class="live-events-feed-item--time">
-        {{ $filters.fullName(props.event, 'data.user') }} - 
-        {{ moment(props.event.updatedAt).format('MMM D [at] hh:mma') }} 
-        ({{dateFromNow}})
-      </section>
-      <section class="live-events-feed-item--information">
-        <section class="live-events-feed-item--information-images">
-          <img 
-            :src="iconSrc" 
-            alt="icon" 
-            class="live-events-feed-item--information-icon">
-          <LottiesConfettiDocs 
-            v-if="!isEmpty(props.lottieAnimationData)"
-            style="--lottie-confetti-docs--width: 200px;"
-            :animationData="props.lottieAnimationData"/>
-        </section>
-        <section class="live-events-feed-item--information-display">
-          <span 
-            :style="{ color: props.color }" 
-            class="live-events-feed-item--information-display-text">
-            {{ get(props.event, 'data.display') }}
-          </span>
-          <span 
-            :style="{ color: props.oColor }"
-            class="live-events-feed-item--information-display--observation">
-            {{ get(props.event, 'data.resume') || '---' }}
-          </span>
-        </section>
-      </section>
-      <section class="live-events-feed-item--information-observation">
-        <span>{{ get(props.event, 'data.observation') || '---' }}</span>
-      </section>
-    </section>
-    <section class="live-events-feed-item--menu">
-      <LiveEventsFeedMenu>
-        <template #actions>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="$emitter.emit(eventName, get(event, 'docId'))">
-              {{ isOpen ? 'Close' : 'Open' }}
-            </el-dropdown-item>
-            <el-dropdown-item divided disabled>
-              Delete
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </LiveEventsFeedMenu>
-    </section>
+    class="raf-bubble" 
+    :id="id"
+    :class="containerStatus(index)">    
+    <div 
+      :style="{ background: background }" 
+      :class="getClass(index)"
+      class="raf-item">
+      <div>
+        <div 
+          :style="{ color: tColor }" 
+          class="live-events-feed-item--time">
+          {{ $filters.fullName(event, 'data.user') }} - 
+          {{ moment(event.updatedAt).format('MMM D [at] hh:mma') }} 
+          ({{ moment(event.updatedAt).fromNow() }})
+        </div>
+        <div class="live-events-feed-item--information">
+          <div class="live-events-feed-item--information-images">
+            <img 
+              :src="iconSrc" 
+              alt="icon" 
+              class="live-events-feed-item--information-icon">
+            <LottiesConfettiDocs 
+              v-if="!isEmpty(lottieAnimationData)"
+              style="--lottie-confetti-docs--width: 200px;"
+              :animationData="lottieAnimationData"/>
+          </div>
+          <div class="live-events-feed-item--information-display">
+            <span 
+              :style="{ color: color }" 
+              class="live-events-feed-item--information-display-text">
+              {{ get(event, 'data.display') }}
+            </span>
+            <span 
+              :style="{ color: oColor }"
+              class="live-events-feed-item--information-display--observation">
+              {{ get(event, 'data.resume') || '---' }}
+            </span>
+          </div>
+        </div>
+        <div class="live-events-feed-item--information-observation">
+          <span>{{ get(event, 'data.observation') || '---' }}</span>
+        </div>
+      </div>
+      <div class="live-events-feed-item--menu">
+        <!-- <span>
+          <el-tag class="mx-1" effect="plain" type="info">
+            <span>
+              3 More
+              <el-icon color="red"><ArrowDownBold /></el-icon>
+            </span>
+          </el-tag>
+        </span> -->  
+        <LiveEventsFeedMenu>
+          <template #actions>
+            <el-dropdown-menu>
+              
+              <el-dropdown-item v-if="!isOpen" @click="toggleCollapse(!isOpen)">
+                {{ 'Open' }}
+              </el-dropdown-item>
+              <el-dropdown-item v-else @click="toggleCollapse(!isOpen)">
+                {{ 'Close' }}
+              </el-dropdown-item>
+
+              <el-dropdown-item divided disabled>
+                Delete
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </LiveEventsFeedMenu>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
+  import { 
+    ref, 
+    onMounted, 
+    onUnmounted, 
+    defineProps, 
+    defineEmits, 
+    inject 
+  } from 'vue'
   import { get, isEmpty } from 'lodash'
-  import moment from 'moment'
-  import { ref, onMounted, onUnmounted, defineProps } from 'vue'
+  import { v4 as uuidv4 } from 'uuid'
+
   import { useAppStore } from '@/store/app'
   import { $emitter as pluginEmitter } from '@/plugins/pluginEmitter.js'
   import LottiesConfettiDocs from '@/components/lotties/LottiesConfettiDocs.vue'
   import LiveEventsFeedMenu from '@/components/liveEventsFeed/LiveEventsFeedMenu.vue'
 
+  const moment = inject('moment')
   const appStore = useAppStore()
+
+  const emit = defineEmits(['onCollapse'])
 
   const props = defineProps({
     tone: String,
@@ -98,16 +127,37 @@
     }
   })
 
+  const id = uuidv4()
   const isOpen = ref(false)
   const interval = ref(null)
   const eventName = 'openFeedGroup'
   const dateFromNow = ref(moment(props.event.updatedAt).fromNow())
 
+  interval.value = setInterval(() => { 
+    dateFromNow.value = moment(props.event.updatedAt).fromNow()
+  }, 1000)
+
+  const toggleCollapse = (visibility) => {
+    console.log('roge toggleCollapse ----->', visibility)
+    pluginEmitter.emit(eventName, {
+      visibility,
+      groupId: get(props.event, 'docId')
+    })
+  }
+
   const getClass = index => {
     const frontClass = 'live-events-feed-item--front'
-    if (isOpen.value) return frontClass
     if (index == 0) return frontClass
-    return `live-events-feed-item--back-${index} live-events-feed-item--back-close`
+    return `raf-itemBack-${index}`
+    // if (isOpen.value) return `live-events-feed-item--back-${index}--open`
+    // return `live-events-feed-item--back-${index} live-events-feed-item--back-close`
+  }
+
+  const containerStatus = index => {
+    if (index == 0) return null
+    let _default = `raf-bubbleBack`
+    if (isOpen.value) _default += ` raf-bubbleBack--open`
+    return _default
   }
 
   onUnmounted(() => {
@@ -115,18 +165,17 @@
     pluginEmitter.off(eventName)
     clearInterval(interval.value)
   })
-
+  
   onMounted(() => {
     if (props.tone && props.event.source == 'socket' && !appStore.mute) {
       new Audio(props.tone).play()
     }
-    interval.value = setInterval(() => { 
-      dateFromNow.value = moment(props.event.updatedAt).fromNow()
-    }, 10000)
-    pluginEmitter.on(eventName, groupId => {
+    pluginEmitter.on(eventName, ({ visibility, groupId }) => {
+      console.log('roge pluginEmitter on ----->', visibility, groupId)
       const docId = get(props, 'event.docId')
       if (groupId != docId) return 
-      isOpen.value = !isOpen.value
+      isOpen.value = visibility
+      setTimeout(() => emit('onCollapse', visibility), props.index * 10)
     })
   })
 </script>
@@ -140,32 +189,38 @@
 <style scoped lang="scss">
   @use "sass:math";
   
-  $max_events_group: 100;
+  $max_events_group: 500;
 
-  %globe-back-styles {
-    left: 50%;
-    width: 100%;
-    position: absolute;
-    transform: translateX(-50%);
-  }
+  // @keyframes raf-bubble-open {
+  //   0% {
+  //     display: block !important;
+  //   }
+  //   100% {
+  //     display: block !important;
+  //   }
+  // }
 
-  @mixin top-event-group {
-    $base: 10;
-    $units:'rem';
-    $factor: 70;
-    @for $i from 1 through $max_events_group {
-      .live-events-feed-item--back-#{$i} { 
-        @extend %globe-back-styles; 
-        // width: #{100 - $i} + '%'; 
-        z-index: #{$max_events_group - $i};
-        top: #{ math.log($i * $factor * $i, $base) + $units};
-      }
+  // %raf-itemBack {
+
+  // }
+
+  // @mixin raf-bubble {
+  //   @for $i from 1 through $max_events_group {
+  //   }
+  // }
+
+  // @include raf-bubble;
+
+
+  .raf-bubbleBack {
+    display: none;
+    position: relative;
+    &--open {
+      display: block;
     }
   }
-
-  @include top-event-group;
-
-  .live-events-feed-item {
+  
+  .raf-item {
     display: grid;
     gap: 0px 0px; 
     grid-template-columns: 16fr 1fr; 
@@ -176,7 +231,11 @@
   }
   .live-events-feed-item--front {
     z-index: $max_events_group + 1;
-    position: relative;
+    position: inherit;
+  }
+  .live-events-feed-item--open {
+    z-index: 0;
+    position: inherit;
   }
   .live-events-feed-item--back-close {
     .live-events-feed-item--information-observation {
