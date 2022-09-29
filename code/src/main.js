@@ -4,9 +4,10 @@ import elementPlus from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import Vue3Lottie from 'vue3-lottie'
 import moment from 'moment'
-import 'vue3-lottie/dist/style.css'
 
+import 'vue3-lottie/dist/style.css'
 import 'element-plus/dist/index.css'
+import '@/styles/root-vars.scss'
 
 import App from '@/App.vue'
 import router from '@/router'
