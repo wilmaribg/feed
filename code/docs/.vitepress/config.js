@@ -15,6 +15,7 @@ export default {
         items: [
           { text: 'Avatar', link: '/ComponentAvatar' },
           { text: 'Bubble', link: '/ComponentBubble' },
+          { text: 'Timeline', link: '/ComponentTimeline' },
         ]
       }
     ]
