@@ -117,16 +117,16 @@
     &-wrapperBody {
       display: grid;
       grid-template-columns: 1fr 12fr;
-      grid-column-gap: 5px;
+      grid-column-gap: 10px;
     }
     &-wrapperBodyImage {
-      max-width: 40px;
+      max-width: 3em;
     }
     &-wrapperBodyInfo {
       display: grid;
       grid-template-rows: 1fr 1fr;
       align-items: center;
-      grid-row-gap: 5px;
+      grid-row-gap: 0px;
     }
     &-wrapperBodyInfoSubtitle {
       font-size: var(--text-medium);

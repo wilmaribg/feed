@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import AvatarComponent from '../src/components/AvatarComponent.vue'
+import Avatar from '../src/components/AvatarComponent.vue'
 
 const animate = ref(false)
 const animateF = () => {
@@ -16,18 +16,18 @@ Avatar component
 ## Basic Usage:
 
 ```html
-<AvatarComponent width="100px" height="100px"/>
+<Avatar width="100px" height="100px"/>
 ```
 
-<AvatarComponent width="100px" height="100px"/>
+<Avatar width="100px" height="100px"/>
 
 ## With Animation:
 
 ```html
-<AvatarComponent width="100px" height="100px" :animate="true"/>
+<Avatar width="100px" height="100px" :animate="true"/>
 ```
 
-<AvatarComponent width="100px" height="100px" :animate="animate"/>
+<Avatar width="100px" height="100px" :animate="animate"/>
 
 <button class="button" :disbaled="!animate" @click="animateF">See Animation</button>  
 
