@@ -6,20 +6,17 @@
     <div 
       class="AvatarImage"
       :style="{ 'background-image': `url(${photo || fallback})` }"></div>
-    <!-- <img :src=""> -->
   </div>
 </template>
 
 <script setup>
 import { defineProps } from 'vue'
-// import imgFallback from '../assets/img/logo-mark-sq@3x.png'
-// const imgFallback = 'https://static.remove.bg/remove-bg-web/3ad3b721d276f1af1fb7121aff638a866139749a/assets/start-1abfb4fe2980eabfbbaaa4365a0692539f7cd2725f324f904565a9a744f8e214.jpg'
 
 const props = defineProps({
   photo: String,
-  width: Number,
-  height: Number,
   animate: Boolean,
+  width: [Number, String],
+  height: [Number, String],
   fallback: {
     type: String,
     default: () => 'https://static.remove.bg/remove-bg-web/3ad3b721d276f1af1fb7121aff638a866139749a/assets/start-1abfb4fe2980eabfbbaaa4365a0692539f7cd2725f324f904565a9a744f8e214.jpg'
@@ -28,7 +25,7 @@ const props = defineProps({
 </script>
 
 <style scoped lang="scss">
-  $animation_duration: .5;
+  $animation_duration: .25;
 
   @keyframes Avatar-animate {
     0% {

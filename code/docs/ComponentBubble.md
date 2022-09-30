@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import '../src/styles/root-vars.scss'
-import BubbleComponent from '../src/components/BubbleComponent.vue'
+import Bubble from '../src/components/BubbleComponent.vue'
 
 const animate = ref(true)
 const animateF = () => {
@@ -17,26 +17,26 @@ Bubble component
 ## Basic Usage:
 
 ```html
-<BubbleComponent />
+<Bubble />
 ```
 
-<BubbleComponent />
+<Bubble />
 
 ## With Background And Color:
 
 ```html
-<BubbleComponent background="#302a5f" color="#ffff00" />
+<Bubble background="#302a5f" color="#ffff00" />
 ```
 
-<BubbleComponent background="#302a5f" color="#ffff00" />
+<Bubble background="#302a5f" color="#ffff00" />
 
 ## With Animation:
 
 ```html
-<BubbleComponent :animate="true" />
+<Bubble :animate="true" />
 ```
 
-<BubbleComponent :animate="animate" />
+<Bubble :animate="animate" />
 
 <button class="button" :disbaled="!animate" @click="animateF">See Animation</button>  
 
