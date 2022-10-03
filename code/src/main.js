@@ -10,6 +10,7 @@ import '@/styles/root-vars.scss'
 import App from '@/App.vue'
 import router from '@/router'
 import { sdk, socket } from '@/provides/sdk'
+import eventBus from '@/provides/eventBus'
 import filter from '@/filters/filter'
 // import pluginNodriza from '@/plugins/pluginNodriza'
 import pluginEmitter from '@/plugins/pluginEmitter'
@@ -22,8 +23,9 @@ const pinia = createPinia()
 const app = createApp(App)
 
 app.provide('sdk', sdk)
-app.provide('socket', socket)
 app.provide('moment', moment)
+app.provide('socket', socket)
+app.provide('eventBus', eventBus)
 
 app.use(pinia)
 app.use(Vue3Lottie)
