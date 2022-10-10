@@ -3,7 +3,7 @@ export default (callback, delay=3000) => {
   let isRunning = false
   const dataset = new Array()
 
-  const run = item => {
+  const run = () => {
     const data = dataset.shift()
     if (data) {
       isRunning = true
@@ -17,7 +17,7 @@ export default (callback, delay=3000) => {
   return {
     add: item => {
       dataset.push(item)
-      if (!isRunning) interval = setInterval(run, delay, item)
+      if (!isRunning) interval = setInterval(run, delay)
     }
   }
 } 

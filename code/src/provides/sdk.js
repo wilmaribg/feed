@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import Nodriza from 'nodriza'
 import * as io from 'socket.io-client'
-import fakeSession from '@/fakeSession.json'
+import fakeSession from '../fakeSession.json'
 
 const config = {
   session () {
@@ -10,7 +10,7 @@ const config = {
         window.localStorage.setItem('session', JSON.stringify(fakeSession))
         return fakeSession
       } else {
-        return JSON.stringify(window.localStorage.getItem('session'))
+        return JSON.parse(window.localStorage.getItem('session'))
       }
     } catch (e) {
       return {}
@@ -36,8 +36,8 @@ socketInstance.on('connect', () => {
   console.log('💡 Socket Authenticated:', connected)
 })
 
-const socket = () => socketInstance
-const sdk = () => new Nodriza({ 
+const socket = socketInstance
+const sdk = new Nodriza({ 
   _window: window,
   hostname: config.hostname(), 
   accessToken: config.accessToken(), 

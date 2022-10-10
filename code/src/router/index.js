@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import PreloaderView from '@/views/PreloaderView.vue'
-import LiveActivityFeed from '@/views/LiveActivityFeed.vue'
+import FeedView from '@/views/FeedView.vue'
 
 const routes = [
   {
@@ -9,9 +9,9 @@ const routes = [
     component: PreloaderView
   },
   {
-    path: '/live-activity-feed',
-    name: 'LiveActivityFeed',
-    component: LiveActivityFeed
+    path: '/feed',
+    name: 'FeedView',
+    component: FeedView
   },
   {
     path: '/about',

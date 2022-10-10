@@ -1,3 +1,4 @@
+import { get } from 'lodash'
 import { defineStore } from 'pinia'
 
 export const useProfileStore = defineStore('profile', {
@@ -5,7 +6,9 @@ export const useProfileStore = defineStore('profile', {
     profile: {}
   }),
   getters: {
-
+    userId() {
+      return get(this.profile, 'profile.id')
+    }
   },
   actions: {
     setProfile(_profile) {

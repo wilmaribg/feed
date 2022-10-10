@@ -5,54 +5,150 @@
       'Bubble--animate': animate
     }">
     <div 
+      :id="id"
       class="Bubble-wrapper" 
       :style="{ 
         'color': color,
-        'background-color': background 
+        'background': bg || background,
+        'z-index': event.data.lottie ? 1 : 0
       }">
       <div class="Bubble-wrapperHeader">
         <div class="Bubble-headerUser">
-          Juan Camilo Perez - JAN 22 at 2:30pm • 3 Interactions
+          {{ $filters.fullName(event, 'data.user') }} 
+          - {{ moment(event.data.createdAt).format('MMM D H:mma') }}
+          <template v-if="timeline">
+            <span v-if="(event.data.interactions || interactions)">
+              • <a href="javascript:void(0)" @click="showInteractions">
+                {{ interactions || event.data.interactions || 0 }} Interactions
+              </a>
+            </span>
+          </template>
         </div>
         <div class="Bubble-headerActions">
           ...
         </div>
       </div>
-      <div class="Bubble-wrapperBody">
-        <div class="Bubble-wrapperBodyImage">
-          <img :src="iconApproved">
-        </div>
-        <div class="Bubble-wrapperBodyInfo">
-          <div class="Bubble-bodyInfoTitle">
-            Proposal: BMW Annual subscription
+      <div class="Bubble-wrapperBody columns mb-0">
+        <div class="column is-narrow is-relative">
+          <div 
+            class="lottie" 
+            :id="lottieContainer" 
+            :class="{'lottie--fullScreen': lottieFullScreen}">  
           </div>
-          <div class="Bubble-wrapperBodyInfoSubtitle">
-            Client: BMW - Total: $2.500 USD - Heat: COLD - Interest: 0 Pnts
+          <img :id="iconContainer" class="Bubble-wrapperBodyImage" :src="icon || iconApproved">
+        </div>
+        <div class="Bubble-wrapperBodyInfo column">
+          <div class="Bubble-bodyInfoTitle" :style="{ color: titleColor }">
+            {{ event.data.display }}
+          </div>
+          <div class="Bubble-wrapperBodyInfoSubtitle" :style="{ color: descriptionColor }">
+            {{ event.data.resume }}
           </div>
         </div>
       </div>
       <div class="Bubble-wrapperFooter">
-        The proposals has been seen 5 minutos after has been created.
+        {{ event.data.observation }}
       </div>
     </div>  
+  </div>
+  <div v-if="timeline" class="ml-0 mt-5">
+    <Timeline v-if="show" :docId="event.docId" :id="event.id" />
   </div>
 </template>
 
 <script setup>
-  import { defineProps } from 'vue'
-  import iconApproved from '../assets/icons/icn-approved.svg'
+import { get } from 'lodash'
+import { v4 as uuidv4 } from 'uuid'
+import { loadAnimation } from 'lottie-web'
+import { ref, defineProps, inject, onMounted } from 'vue'
+import Timeline from './TimelineComponent.vue'
+import iconApproved from '../assets/icons/icn-approved.svg'
 
-  const props = defineProps({
-    animate: Boolean,
-    color: {
-      type: String,
-      default: '#ffffff'
-    },
-    background: {
-      type: String,
-      default: '#000000'
-    },
+const id = uuidv4()
+const show = ref(false)
+const interactions = ref(0)
+const iconContainer = uuidv4()
+const lottieContainer = uuidv4()
+const $emitter = inject('$emitter')
+const moment = inject('moment')
+const props = defineProps({
+  event: Object,
+  animate: Boolean,
+  timeline: {
+    type: Boolean,
+    default: true
+  },
+  color: {
+    type: String,
+    default: '#ffffff'
+  },
+  background: {
+    type: String,
+    default: '#000000'
+  },
+})
+
+const bg = ref(null)
+const icon = ref(null)
+const titleColor = ref(null)
+const lottieFullScreen = ref(false)
+const descriptionColor = ref(null)
+
+const showInteractions = () => {
+  show.value = !show.value
+  setTimeout(() => {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' })
+  }, 800)
+}
+
+const recursiveSound = (tracks, index) => {
+  if (!tracks[index]) return
+  const audio = new Audio(tracks[index])
+  audio.play()
+  audio.addEventListener('ended', () => {
+    let next = index + 1
+    setTimeout(recursiveSound, 100, tracks, next)
   })
+}
+
+onMounted(() => {
+  const image = get(props.event, 'data.icon', '')
+  const background = get(props.event, 'data.background', '')
+  const colors = get(props.event, 'data.color', '').split(',')
+  
+  if (image) icon.value = image
+  if (background) bg.value = background
+  if (colors && colors[0]) titleColor.value = colors[0]
+  if (colors && colors[1]) descriptionColor.value = colors[1]
+
+  if (props.event.socket) {
+    const lottie = get(props.event, 'data.lottie')
+    const sound = get(props.event, 'data.sound', [])
+    lottieFullScreen.value = get(props.event, 'data.lottieFullScreen', false)
+    
+    if (sound.length) recursiveSound(sound, 0)
+    if (lottie) {
+      setTimeout(() => {
+        const elLottie = document.getElementById(lottieContainer)
+        const animation = loadAnimation({
+          container: elLottie,
+          renderer: 'svg',
+          autoplay: true,
+          path: lottie,
+          loop: false,
+        })
+        const position = document.getElementById(iconContainer).getBoundingClientRect()
+        elLottie.style.top = `${position.top}px`
+        elLottie.style.left = `calc(${position.left}px + 1.8em - 10em)`
+        animation.onComplete = () => elLottie.style.display = 'none'
+      }, 500)
+    }
+  }
+
+  $emitter.on('feed:eventChangeInteractions', ({ docId, count }) => {
+    if (props.event.docId == docId) interactions.value = count
+  })
+})
 </script>
 
 <style scoped lang="scss">
@@ -77,6 +173,17 @@
     }
   }
   .Bubble {
+    .lottie {
+      width: 20em;
+      position: fixed;
+      &--fullScreen {
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw;
+        height: auto;
+        z-index: 99999;
+      }
+    }
     &--animate {
       position: relative;
       overflow: hidden;
@@ -113,14 +220,25 @@
       font-weight: var(--font-medium);
       display: grid;
       grid-template-columns: 1fr 0fr;
+      a {
+        color: rgba(225, 225, 225, 0.6);
+        &:hover {
+          color: #ffffff;
+        }
+      }
     }
-    &-wrapperBody {
+    /*&-wrapperBody {
       display: grid;
       grid-template-columns: 1fr 12fr;
       grid-column-gap: 10px;
-    }
+    }*/
     &-wrapperBodyImage {
-      max-width: 3em;
+      width: 3em; 
+      height: auto;
+    }
+    &-bodyInfoTitle {
+      font-size: 1.3em;
+      font-weight: 800;
     }
     &-wrapperBodyInfo {
       display: grid;
@@ -129,8 +247,8 @@
       grid-row-gap: 0px;
     }
     &-wrapperBodyInfoSubtitle {
-      font-size: var(--text-medium);
-      font-weight: var(--font-bold);
+      font-size: 1.2em;
+      font-weight: 600;
     }
     &-wrapperFooter {
       color: var(--text-gray);

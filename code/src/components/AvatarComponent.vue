@@ -5,7 +5,7 @@
     :style="{ width, height }">
     <div 
       class="AvatarImage"
-      :style="{ 'background-image': `url(${photo || fallback})` }"></div>
+      :style="{ 'background-image': `url(${props.photo || props.fallback})` }"></div>
   </div>
 </template>
 
