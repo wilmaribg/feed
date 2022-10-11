@@ -1,7 +1,7 @@
 <template>
   <PageComponent>
     <template v-slot:body>
-      <div class="container pt-5 pb-5">
+      <div class="ml-6 pt-5 pb-5">
         <FeedComponent />
       </div>
     </template>

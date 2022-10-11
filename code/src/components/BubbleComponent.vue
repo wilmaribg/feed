@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="Bubble" 
+    class="Bubble mr-6" 
     :class="{
       'Bubble--animate': animate
     }">
