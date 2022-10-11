@@ -1,19 +1,22 @@
 <template>
   <div :id="elId" class="InfinitescrollItem">
-    <slot></slot>
+    <slot :elSelector="elId"></slot>
   </div>
 </template>
 
 <script setup>
 import { Scene } from 'scrollmagic'
 import { v4 as uuidv4 } from 'uuid'
-import { ref, defineProps, onMounted, defineEmits } from 'vue'
+import { ref, inject, defineProps, onMounted, defineEmits } from 'vue'
 
 const elId = uuidv4()
-const emit = defineEmits(['onRead'])
 const isRead = ref(false)
+const $emitter = inject('$emitter')
+const emit = defineEmits(['onRead'])
 const props = defineProps({
   once: Boolean,
+  event: Object,
+  index: String,
   scrollTo: {
     type:Function,
     required: true
@@ -44,6 +47,11 @@ onMounted(() => {
       emit('onRead', { status: 'pending', uuid: elId })
     }
   })
+  $emitter.on('feed:moveToIndex', index => {
+    if (index != props.index) return 
+    triggerElement.scrollIntoView({block: 'start', behavior: 'auto'})
+  })
+  if (props.event.moveTo) props.scrollTo(null, Function)
 })
 </script>
 

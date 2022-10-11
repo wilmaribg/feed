@@ -2,40 +2,35 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import Vue3Lottie from 'vue3-lottie'
 import moment from 'moment'
-import VueToast from 'vue-toast-notification'
+import { get } from 'lodash'
 
-import 'vue-toast-notification/dist/theme-default.css'
+import 'bulma'
+import '@element-plus/icons-vue'
 import 'vue3-lottie/dist/style.css'
 import 'element-plus/dist/index.css'
 import '@/styles/root-vars.scss'
 
 import App from '@/App.vue'
 import router from '@/router'
-import { sdk, socket } from '@/provides/sdk'
 import eventBus from '@/provides/eventBus'
+import { sdk, socket } from '@/provides/sdk'
+import pluginEmitter from '@/provides/emitter'
 import filter from '@/filters/filter'
-// import pluginNodriza from '@/plugins/pluginNodriza'
-import pluginEmitter from '@/plugins/pluginEmitter'
-import pluginFakeSession from '@/plugins/pluginFakeSession'
-import pluginPublicPath from '@/plugins/pluginPublicPath'
-import Avatar from '@/components/Avatar'
-import Page from '@/components/page/Page'
+import Page from '@/components/page/PageComponent'
 
 const pinia = createPinia()
 const app = createApp(App)
 
+app.provide('get', get)
 app.provide('sdk', sdk)
 app.provide('moment', moment)
 app.provide('socket', socket)
 app.provide('eventBus', eventBus)
+app.provide('$emitter', pluginEmitter)
 
 app.use(pinia)
 app.use(Vue3Lottie)
 app.use(router)
 app.use(filter)
-app.use(pluginPublicPath)
-app.use(pluginEmitter)
-app.use(pluginFakeSession, { mode: process.env.NODE_ENV })
 app.component('PageComponent', Page)
-app.component('AvatarComponent', Avatar)
 app.mount('#app')

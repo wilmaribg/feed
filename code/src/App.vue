@@ -2,11 +2,11 @@
   <router-view/>
 </template>
 
-<style lang="scss">
-  $enable-cssgrid: true;
-  @import 'bootstrap/scss/bootstrap.scss';
-  @import '@/assets/styles/styles.scss';
+<script setup>
 
+</script>
+
+<style lang="scss">
   pre {
     color: white;
   }

@@ -1,11 +1,11 @@
 <template>
   <div class="PreloaderView">
     <center>
-      <LottiesPreload />
+      <div :id="id" class="lottie"></div>
     </center>
     <center>
-      <div class="text--start">
-        <el-link @click="router.push('/live-activity-feed')" type="info">
+      <div class="text--start is-clickable">
+        <el-link @click="router.push('/feed')" type="info">
           Start 
           <el-icon class="el-icon--right" color="#808080">
             <IconPromotion />
@@ -27,11 +27,26 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue'
-  import router from '@/router/index.js'
-  import LottiesPreload from '@/components/lotties/LottiesPreload.vue'
-  
-  const accept = ref(true)
+import { v4 as uuidv4 } from 'uuid'
+import { ref, onMounted } from 'vue'
+import { ElSwitch, ElIcon, ElLink } from 'element-plus'
+import { loadAnimation } from 'lottie-web'
+import { Promotion as IconPromotion } from '@element-plus/icons-vue'
+import router from '../router/index.js'
+import animationData from '../assets/lotties/logo-animation.json'
+
+const id = uuidv4()
+const accept = ref(false)
+
+onMounted(() => {
+  const animation = loadAnimation({
+    container: document.getElementById(id),
+    renderer: 'svg',
+    autoplay: true,
+    animationData,
+    loop: false,
+  })
+})
 </script>
 
 <style scoped lang="scss">

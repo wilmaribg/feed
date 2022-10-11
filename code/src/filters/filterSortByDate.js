@@ -1,11 +1,13 @@
-import { get } from 'lodash'
+import { inject } from 'vue'
 
 export default (array, key, sort=-1) => {
+  const get = inject('get')
+  const moment = inject('moment')
+
   return array.sort((before, current) => {
-    if (get(before, key).isBefore(get(current, key))) {
-      return -1 * sort
-    } else {
-      return 1 * sort
-    }
+    const afterDate = moment(get(before, key))
+    const currentDate = moment(get(current, key))
+    if (afterDate.isBefore(currentDate)) return -1 * sort
+    return 1 * sort
   })
 } 
