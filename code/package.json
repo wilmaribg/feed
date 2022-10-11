@@ -27,6 +27,7 @@
     "uuid": "^9.0.0",
     "vue": "^3.2.39",
     "vue-router": "^4.1.5",
+    "vue-toast-notification": "^0.6.3",
     "vue3-lottie": "^2.3.0"
   },
   "devDependencies": {
