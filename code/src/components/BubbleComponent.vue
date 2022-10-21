@@ -13,19 +13,52 @@
         'z-index': event.data.lottie ? 1 : 0
       }">
       <div class="Bubble-wrapperHeader">
-        <div class="Bubble-headerUser">
-          {{ $filters.fullName(event, 'data.user') }} 
-          - {{ moment(event.data.createdAt).format('MMM D H:mma') }}
-          <template v-if="timeline">
-            <span v-if="(event.data.interactions || interactions)">
-              • <a href="javascript:void(0)" @click="showInteractions">
-                {{ interactions || event.data.interactions || 0 }} Interactions
-              </a>
-            </span>
-          </template>
+        <div class="columns Bubble-headerUser mb-0">
+          <div class="column pb-0 is-narrow">
+            {{ $filters.fullName(event, 'data.user') }} 
+            - {{ moment(event.data.createdAt).format('MMM D H:mma') }}
+            <template v-if="timeline">
+              <span v-if="(event.data.interactions || interactions)">
+                • <a href="javascript:void(0)" @click="showInteractions">
+                  {{ interactions || event.data.interactions || 0 }} Interactions
+                </a>
+              </span>
+            </template>
+          </div>
+          <div class="column pb-0 has-text-right mr-6">
+            <el-link 
+              :icon="View" 
+              @click="$emitter.emit('docViewer:open', linkView)"
+              class="mx-2 has-text-white is-hidden Bubble-textActions"
+            >
+              &nbsp;View
+            </el-link>
+          </div>
         </div>
         <div class="Bubble-headerActions">
-          ...
+          <el-dropdown trigger="click">
+            <span class="el-dropdown-link">
+              <box-icon name='dots-vertical-rounded' type='solid' color="white"/>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="open(linkEdit)">
+                  <box-icon name='edit' type='solid'></box-icon>
+                  &nbsp;Edit document
+                </el-dropdown-item>
+                <el-dropdown-item @click="deleteEvent" divided>
+                  <box-icon name='trash' type='solid'></box-icon>
+                  &nbsp;Delete event
+                </el-dropdown-item>
+                <el-dropdown-item @click="deleteEventSiblings" divided>
+                  <box-icon name='trash-alt' type='solid' color="hsl(348, 100%, 61%)"></box-icon>
+                  <span class="has-text-danger">
+                    &nbsp;Delete all related events
+                  </span>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
       </div>
       <div class="Bubble-wrapperBody columns mb-0">
@@ -60,9 +93,13 @@
 import { get } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 import { loadAnimation } from 'lottie-web'
-import { ref, defineProps, inject, onMounted } from 'vue'
+import { Edit, View } from '@element-plus/icons-vue'
+import { ref, defineProps, inject, onMounted, computed } from 'vue'
+import { ElIcon, ElLink, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus'
 import Timeline from './TimelineComponent.vue'
+import { config as sdkConfig } from '../provides/sdk.js'
 import iconApproved from '../assets/icons/icn-approved.svg'
+import { EventsDelete, EventsSiblingsDelete } from '../queries/index.js'
 
 const id = uuidv4()
 const show = ref(false)
@@ -93,6 +130,12 @@ const icon = ref(null)
 const titleColor = ref(null)
 const lottieFullScreen = ref(false)
 const descriptionColor = ref(null)
+const linkView = computed(() => {
+  return `https://${sdkConfig.hostname()}/v1/document/proposal/${props.event.docId}/full?source=none&rand=${new Date().getTime()}`
+})
+const linkEdit = computed(() => {
+  return `https://${sdkConfig.hostname()}/app/documents/proposals/edit/${props.event.docId}`
+})
 
 const showInteractions = () => {
   show.value = !show.value
@@ -100,6 +143,8 @@ const showInteractions = () => {
     document.getElementById(id).scrollIntoView({ behavior: 'smooth' })
   }, 800)
 }
+
+const open = link => window.open(link) 
 
 const recursiveSound = (tracks, index) => {
   if (!tracks[index]) return
@@ -110,6 +155,27 @@ const recursiveSound = (tracks, index) => {
     setTimeout(recursiveSound, 100, tracks, next)
   })
 }
+
+const deleteEvent = async () => {
+  try {
+    const id = get(props.event, 'id', null)
+    await EventsDelete(id)
+    $emitter.emit('bubble:deleteEvent', id)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const deleteEventSiblings = async () => {
+  try {
+    const docId = get(props.event, 'docId', null)
+    await EventsSiblingsDelete(docId)
+    $emitter.emit('bubble:deleteEventSiblings', docId)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 
 onMounted(() => {
   const image = get(props.event, 'data.icon', '')
@@ -140,7 +206,10 @@ onMounted(() => {
         const position = document.getElementById(iconContainer).getBoundingClientRect()
         elLottie.style.top = `${position.top}px`
         elLottie.style.left = `calc(${position.left}px + 1.8em - 10em)`
-        animation.onComplete = () => elLottie.style.display = 'none'
+        animation.onComplete = () => {
+          elLottie.style.display = 'none'
+          setTimeout(() => delete props.event.socket, 1000)
+        } 
       }, 500)
     }
   }
@@ -173,6 +242,11 @@ onMounted(() => {
     }
   }
   .Bubble {
+    &:hover {
+      .Bubble-textActions {
+        display: inline-flex !important;
+      }
+    }
     .lottie {
       width: 20em;
       position: fixed;

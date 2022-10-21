@@ -57,7 +57,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
   .InfinitescrollItem {
-    margin-bottom: 1rem;
+    // margin-bottom: 1rem;
   }
 </style>
 
