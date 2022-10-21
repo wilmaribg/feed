@@ -27,27 +27,35 @@
       </nav>
     </div>
     <div class="Page-body">
-      <slot name="body"></slot>
+      <slot name="body" :bodyHeight="bodyHeight"></slot>
     </div>
   </div>
 </template>
 
 <script setup>
 import { get } from 'lodash'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import { UserMe } from '../../queries/index.js'
 import AvatarComponent from '../AvatarComponent.vue'
 
 const name = ref(null)
 const company = ref(null)
+const bodyHeight = ref(0) 
 const imageProfile = ref(null)
+const $emitter = inject('$emitter')
+
+const setbodyHeight = () => {
+  bodyHeight.value = document.querySelector('.Page-body').clientHeight
+}
 
 onMounted(async () => {
   try {
+    setbodyHeight()
     const me = await UserMe()
     name.value = get(me, 'fullName')
     company.value = get(me, 'company.name')
     imageProfile.value = get(me, 'avatars.original')
+    $emitter.on('onChangeZoom', value => setbodyHeight())
   } catch(err) {
     console.error(err)
   }
@@ -56,11 +64,13 @@ onMounted(async () => {
 
 <style scoped lang="scss">
   .Page {
-    background-color: #000000;
-    position: fixed;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    position: fixed;
+    background-color: #000000;
+    &-Header {
+      max-height: 115px;
+    }
     &-HeaderDivide {
       width: 3px;
       display: block;
@@ -69,6 +79,9 @@ onMounted(async () => {
       margin-right: 25px;
     }
     &-body {
+      display: flex;
+      position: relative;
+      height: calc(100% - 115px);
       background: linear-gradient(0deg, rgba(85,207,250,0.10) 40%, rgba(255,86,55,0.10) 100%);
     }
   }

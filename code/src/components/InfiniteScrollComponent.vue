@@ -2,34 +2,35 @@
   <slot name="after"></slot>
   <div 
     :id="elId" 
-    class="Infinitescroll" 
     :style="{ 
-      // height,
+      height,
       'overflow-y': disableScroll ? 'hidden' : 'auto'
-    }">
+    }"
+    class="Infinitescroll mr-6"
+  >
     <slot :smController="smController" :scrollTo="scrollTo"></slot>
   </div>
   <slot name="before"></slot>
 </template>
 
 <script setup>
-// import 'scrollmagic/scrollmagic/minified/plugins/debug.addIndicators.min.js'
-import { Controller } from 'scrollmagic'
 import { v4 as uuidv4 } from 'uuid'
-import { ref, defineProps, onMounted, defineEmits } from 'vue'
+import { Controller } from 'scrollmagic'
+import { ref, defineProps, onMounted, defineEmits, inject } from 'vue'
 
 let scrollPos = 'bottom' 
 const elId = uuidv4()
 const smController = ref({})
+const $emitter = inject('$emitter')
 const emit = defineEmits(['onTop'])
 const props = defineProps({
   data: Array,
+  height: Number,
   disableScroll: {
     type: Boolean,
     default: false
   },
   indicators: Boolean,
-  // height: { type:String, default: '300px' },
 })
 const scrollHandler = () => {
   const container = document.getElementById(elId)
@@ -62,7 +63,30 @@ onMounted(() => {
   const container = document.getElementById(elId)
   container.onscroll = scrollHandler
   smController.value = new Controller({ container, addIndicators: props.indicators })
-  container.style.height = `calc(99vh - ${container.getBoundingClientRect().top}px)`
+
+
+  if (props.parent) {
+    const { top, height } = document.querySelector(props.parent).getBoundingClientRect()
+    console.log(top, height)
+    console.log(container.nextElementSibling)
+    // const nextSibling = container.nextElementSibling.getBoundingClientRect().height
+    // const previousSibling = container.previousElementSibling.getBoundingClientRect().height
+    // console.log('props.parent --->', props.parent, (height - top), nextSibling, previousSibling, nextSibling, previousSibling)
+    // container.style.height = (height - top) - nextSibling - previousSibling + 'px'
+  }
+
+
+
+
+
+  // const containerTop = container.getBoundingClientRect().top
+  // container.style.height = `calc(99vh - ${containerTop}px)`
+  // $emitter.on('onChangeZoom', value => {
+  //   console.log('roge onChangeZoom ------>', value, container.getBoundingClientRect())
+  //   const containerTop = container.getBoundingClientRect().top + 50
+  //   const containerBottom = container.getBoundingClientRect().bottom + 50
+  //   container.style.height = `calc(99vh + ${containerBottom}px - ${containerTop}px)`
+  // })
 })
 </script>
 

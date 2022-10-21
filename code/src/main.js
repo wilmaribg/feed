@@ -5,6 +5,7 @@ import moment from 'moment'
 import { get } from 'lodash'
 
 import 'bulma'
+import 'boxicons'
 import '@element-plus/icons-vue'
 import 'vue3-lottie/dist/style.css'
 import 'element-plus/dist/index.css'

@@ -3,6 +3,7 @@ nodriza
 node_modules
 /dist
 /report-feed
+/raf
 /outputDir
 
 

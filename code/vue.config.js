@@ -1,10 +1,17 @@
 const { defineConfig } = require('@vue/cli-service')
+
 module.exports = defineConfig({
   assetsDir: './',
-  outputDir: 'report-feed',
-  publicPath: '/report-feed',
+  outputDir: 'raf',
+  publicPath: '/raf',
   filenameHashing: false,
   transpileDependencies: true,
+  pages: {
+    index: {
+      entry: 'src/main.js',
+      title: 'Prolibu | RAF'
+    }
+  },
   devServer: {
     https: false,
     port: 3003

@@ -1,16 +1,17 @@
 import { get } from 'lodash'
-import Nodriza from 'nodriza'
+import { Apis } from 'nodriza/src/api/index.js'
 import * as io from 'socket.io-client'
 import fakeSession from '../fakeSession.json'
 
+const sessionName = 'session_raf'
 const config = {
   session () {
     try {
       if (process.env.NODE_ENV == 'development') {
-        window.localStorage.setItem('session', JSON.stringify(fakeSession))
+        window.localStorage.setItem(sessionName || 'session', JSON.stringify(fakeSession))
         return fakeSession
       } else {
-        return JSON.parse(window.localStorage.getItem('session'))
+        return JSON.parse(window.localStorage.getItem(sessionName || 'session'))
       }
     } catch (e) {
       return {}
@@ -37,10 +38,9 @@ socketInstance.on('connect', () => {
 })
 
 const socket = socketInstance
-const sdk = new Nodriza({ 
-  _window: window,
-  hostname: config.hostname(), 
+const sdk = new Apis({ 
+  hostname: config.hostname(),
   accessToken: config.accessToken(), 
 })
 
-export { socket, sdk, sdk as default }
+export { config, socket, sdk, sdk as default }

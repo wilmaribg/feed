@@ -1,9 +1,36 @@
 <template>
   <div class="PreloaderView">
     <center>
-      <div :id="id" class="lottie"></div>
+      <div :id="id" class="PreloaderView-lottie mb-5"></div>
+      <div class="mt-4 is-size-5 has-text-grey-light">
+        To enhance your experience in this application,
+      </div>
+      <div class="is-size-5 has-text-grey-light">
+        please turn on your speakers.
+      </div>
+      <div class="mt-5">
+        <div class="columns is-justify-content-center">
+          <div class="column p-0 is-narrow">
+            <button 
+              @click="router.push('/feed')" 
+              class="button p-2 is-ghost has-text-grey-lighter is-size-4"
+            >
+              OK
+            </button>
+          </div>
+          <div class="column p-0 is-narrow">
+            <button 
+              @click="accept=!accept" 
+              class="button p-2 is-ghost has-text-grey-lighter is-size-4"
+            >
+              <box-icon v-if="accept" size="md" type='solid' name='volume-full' color="white"/>
+              <box-icon v-else size="md" type='solid' name='volume-mute' color="white"/>
+            </button>
+          </div>
+        </div>
+      </div>
     </center>
-    <center>
+<!--     <center>
       <div class="text--start is-clickable">
         <el-link @click="router.push('/feed')" type="info">
           Start 
@@ -22,7 +49,7 @@
         active-text="Yes"
         inactive-text="No"
         class=""/>
-    </center>
+    </center> -->
   </div>
 </template>
 
@@ -39,6 +66,7 @@ const id = uuidv4()
 const accept = ref(false)
 
 onMounted(() => {
+  document.body.style.zoom = 1 
   const animation = loadAnimation({
     container: document.getElementById(id),
     renderer: 'svg',
@@ -62,6 +90,10 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    &-lottie :deep(svg) {
+      width: auto !important;
+      height: auto !important;
+    }
   }
   .text--enable-media {
     color: #808080;

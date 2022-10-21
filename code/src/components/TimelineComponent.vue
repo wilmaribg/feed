@@ -5,7 +5,7 @@
       :key="key"
       :timestamp="key == 0 
         ? moment(event.createdAt).fromNow()
-        : moment(events[key-1].createdAt).from(event.createdAt)"
+        : moment(event.createdAt).from(events[0].createdAt)"
       placement="top"
       size="large">
       <BubbleComponent :event="event" :animate="true" :timeline="false" />
