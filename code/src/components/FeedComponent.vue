@@ -1,6 +1,7 @@
 <template>
   <InfiniteScroll
     class="FeedComponent"
+    :scroll-behavior="isLoading ? 'unset' : 'smoot'"
     :height="iHeight"
     :data="events">
     <template #after>
@@ -16,6 +17,17 @@
       </div>
     </template>
     <template #default="{smController, scrollTo}">
+      <div class="columns">
+        <div class="column my-6">
+          <button 
+            @click="loadMore" 
+            :class="{ 'is-loading': isLoading }"
+            class="button is-medium is-fullwidth"
+          >
+            Load More
+          </button>
+        </div>
+      </div>
       <InfiniteScrollItem 
         v-for="(event, index) in events" :key="index"
         @onRead="onReadItem"
@@ -37,11 +49,6 @@
           </div>
         </template>
       </InfiniteScrollItem>
-      <!-- <div class="FeedComponent-itemsLoadMore">
-        <el-button @click="loadMore" size="large" type="info" round>
-          <span class="is-size-4">Load More</span>
-        </el-button>
-      </div> -->
     </template>
   </InfiniteScroll>
   <DocViewerComponent />
@@ -66,6 +73,7 @@ const events = ref([])
 const elHeader = uuidv4()
 const unreadItems = ref({})
 const docState = ref('saved')
+const isLoading = ref(false)
 const disableScroll = ref(false)
 const socket = inject('socket')
 const moment = inject('moment')
@@ -96,12 +104,18 @@ const onReadItem = ({ status, uuid }) => {
 
 const loadMore = async () => {
   try {
+    isLoading.value = true
+    let id 
     const docs = await EventsPage(page.value)
     for (let i = 0; i < docs.length; i++) {
       events.value.unshift({ ...docs[i], moveTo: i == 0 })
+      if (i == 0) id = docs[i].id
     }
     page.value += 1
-    $emitter.emit('feed:moveToIndex', 9)
+    setTimeout(() => {
+      $emitter.emit('feed:moveToEvent', id)
+      isLoading.value = false
+    }, 500)
   } catch (err) {
     console.log(err)
   }
@@ -138,6 +152,12 @@ onMounted(async () => {
       overflow-y: auto;
       overflow-x: hidden;
       position: relative;
+    }
+    &-loadmore {
+      // position: absolute;
+      // width: 100%;
+      // z-index: 1;
+      // top: 0;
     }
     &-itemsLoadMore {
       text-align: center;

@@ -51,6 +51,10 @@ onMounted(() => {
     if (index != props.index) return 
     triggerElement.scrollIntoView({block: 'start', behavior: 'auto'})
   })
+  $emitter.on('feed:moveToEvent', id => {
+    if (id != props.event.id) return 
+    triggerElement.scrollIntoView({block: 'start', behavior: 'auto'})
+  })
   if (props.event.moveTo) props.scrollTo(null, Function)
 })
 </script>
