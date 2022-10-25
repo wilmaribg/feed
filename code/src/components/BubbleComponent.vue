@@ -34,10 +34,13 @@
               &nbsp;View
             </el-link>
           </div>
-          <div class="column is-narrow Bubble-headerActions">
-            <el-dropdown trigger="click">
+          <div class="column is-1 Bubble-headerActions">
+            <!-- <el-dropdown trigger="click" placement="top-end">
               <span class="el-dropdown-link mx-2">
-                <box-icon name='dots-vertical-rounded' type='solid' color="white"/>
+                Dropdown List
+                <el-icon class="el-icon--right" color="white">
+                  <ArrowDown />
+                </el-icon>
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
@@ -57,7 +60,7 @@
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
-            </el-dropdown>
+            </el-dropdown> -->
           </div>
         </div>
       </div>
@@ -98,7 +101,7 @@
 import { get } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 import { loadAnimation } from 'lottie-web'
-import { Edit, View } from '@element-plus/icons-vue'
+import { Edit, View, ArrowDown } from '@element-plus/icons-vue'
 import { ref, defineProps, inject, onMounted, computed } from 'vue'
 import { ElIcon, ElLink, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus'
 import Timeline from './TimelineComponent.vue'

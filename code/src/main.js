@@ -1,13 +1,15 @@
+import moment from 'moment'
+import { get } from 'lodash'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import Vue3Lottie from 'vue3-lottie'
-import moment from 'moment'
-import { get } from 'lodash'
+import DropdownMenu from 'v-dropdown-menu'
 
 import 'bulma'
 import 'boxicons'
 import '@element-plus/icons-vue'
 import 'vue3-lottie/dist/style.css'
+import 'v-dropdown-menu/dist/v-dropdown-menu.css'
 import 'element-plus/dist/index.css'
 import '@/styles/root-vars.scss'
 
@@ -31,6 +33,7 @@ app.provide('$emitter', pluginEmitter)
 
 app.use(pinia)
 app.use(Vue3Lottie)
+app.use(DropdownMenu)  
 app.use(router)
 app.use(filter)
 app.component('PageComponent', Page)
