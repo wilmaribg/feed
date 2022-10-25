@@ -3,15 +3,14 @@ import { Apis } from 'nodriza/src/api/index.js'
 import * as io from 'socket.io-client'
 import fakeSession from '../fakeSession.json'
 
-const sessionName = 'session_raf'
 const config = {
   session () {
     try {
       if (process.env.NODE_ENV == 'development') {
-        window.localStorage.setItem(sessionName || 'session', JSON.stringify(fakeSession))
+        window.localStorage.setItem('session', JSON.stringify(fakeSession))
         return fakeSession
       } else {
-        return JSON.parse(window.localStorage.getItem(sessionName || 'session'))
+        return JSON.parse(window.localStorage.getItem('session'))
       }
     } catch (e) {
       return {}
@@ -29,9 +28,9 @@ const config = {
   }
 }
 
-const socketInstance = io(`https://${config.hostname()}:3000/`)
+const socketInstance = io(`https://${config.hostname()}/`)
 socketInstance.on('error', (err) => console.log('❌ Socket error', err))
-socketInstance.on("disconnect", () => console.log('🔌 Socket disconnect'))
+socketInstance.on("disconnect", () => console.log('🔌 Socket disconnect', socketInstance))
 socketInstance.on('connect', () => {
   const { connected } = socketInstance.emit('authenticate', { accessToken: config.accessToken() })
   console.log('💡 Socket Authenticated:', connected)

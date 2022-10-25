@@ -4,6 +4,7 @@
     :id="elId" 
     :style="{ 
       height,
+      'scroll-behavior': scrollBehavior,
       'overflow-y': disableScroll ? 'hidden' : 'auto'
     }"
     class="Infinitescroll mr-6"
@@ -26,6 +27,10 @@ const emit = defineEmits(['onTop'])
 const props = defineProps({
   data: Array,
   height: Number,
+  scrollBehavior: {
+    type: String,
+    default: 'smooth',
+  },
   disableScroll: {
     type: Boolean,
     default: false

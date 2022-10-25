@@ -34,31 +34,31 @@
               &nbsp;View
             </el-link>
           </div>
-        </div>
-        <div class="Bubble-headerActions">
-          <el-dropdown trigger="click">
-            <span class="el-dropdown-link">
-              <box-icon name='dots-vertical-rounded' type='solid' color="white"/>
-            </span>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="open(linkEdit)">
-                  <box-icon name='edit' type='solid'></box-icon>
-                  &nbsp;Edit document
-                </el-dropdown-item>
-                <el-dropdown-item @click="deleteEvent" divided>
-                  <box-icon name='trash' type='solid'></box-icon>
-                  &nbsp;Delete event
-                </el-dropdown-item>
-                <el-dropdown-item @click="deleteEventSiblings" divided>
-                  <box-icon name='trash-alt' type='solid' color="hsl(348, 100%, 61%)"></box-icon>
-                  <span class="has-text-danger">
-                    &nbsp;Delete all related events
-                  </span>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+          <div class="column is-narrow Bubble-headerActions">
+            <el-dropdown trigger="click">
+              <span class="el-dropdown-link mx-2">
+                <box-icon name='dots-vertical-rounded' type='solid' color="white"/>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="open(linkEdit)">
+                    <box-icon name='edit' type='solid'></box-icon>
+                    &nbsp;Edit document
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="deleteEvent" divided>
+                    <box-icon name='trash' type='solid'></box-icon>
+                    &nbsp;Delete event
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="deleteEventSiblings" divided>
+                    <box-icon name='trash-alt' type='solid' color="hsl(348, 100%, 61%)"></box-icon>
+                    <span class="has-text-danger">
+                      &nbsp;Delete all related events
+                    </span>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
         </div>
       </div>
       <div class="Bubble-wrapperBody columns mb-0">
@@ -72,7 +72,12 @@
         </div>
         <div class="Bubble-wrapperBodyInfo column">
           <div class="Bubble-bodyInfoTitle" :style="{ color: titleColor }">
-            {{ event.data.display }}
+            <span 
+              class="is-clickable Bubble-bodyInfoTitle--hover"
+              @click="(event.data.interactions || interactions) ? showInteractions() : null"
+            >
+              {{ event.data.display }}
+            </span>
           </div>
           <div class="Bubble-wrapperBodyInfoSubtitle" :style="{ color: descriptionColor }">
             {{ event.data.resume }}
@@ -310,9 +315,17 @@ onMounted(() => {
       width: 3em; 
       height: auto;
     }
+    &-headerActions {
+      z-index: 1;
+    }
     &-bodyInfoTitle {
       font-size: 1.3em;
       font-weight: 800;
+    }
+    &-bodyInfoTitle--hover {
+      &:hover {
+        opacity: 0.75;
+      }
     }
     &-wrapperBodyInfo {
       display: grid;

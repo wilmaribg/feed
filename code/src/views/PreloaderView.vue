@@ -66,7 +66,7 @@ const id = uuidv4()
 const accept = ref(false)
 
 onMounted(() => {
-  document.body.style.zoom = 1 
+  document.getElementById('app').style.zoom = 1 
   const animation = loadAnimation({
     container: document.getElementById(id),
     renderer: 'svg',
