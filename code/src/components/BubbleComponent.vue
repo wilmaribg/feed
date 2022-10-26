@@ -201,7 +201,6 @@ const deleteEventSiblings = async () => {
   }
 }
 
-
 onMounted(() => {
   bubbleEl.value = document.getElementById(id)
   const image = get(props.event, 'data.icon', '')
@@ -212,32 +211,37 @@ onMounted(() => {
   if (background) bg.value = background
   if (colors && colors[0]) titleColor.value = colors[0]
   if (colors && colors[1]) descriptionColor.value = colors[1]
-
+  
+  const lottie = get(props.event, 'data.lottie')
+  if (lottie) {
+    console.log('roge lottie --->', lottie)
+    setTimeout(() => {
+      const elLottie = document.getElementById(lottieContainer)
+      const animation = loadAnimation({
+        container: elLottie,
+        renderer: 'svg',
+        autoplay: true,
+        path: lottie,
+        loop: true,
+      })
+      const position = document.getElementById(iconContainer).getBoundingClientRect()
+      // elLottie.style.top = `${position.top}px`
+      // elLottie.style.left = `calc(${position.left}px + 1.8em - 10em)`
+      animation.onComplete = () => {
+        // elLottie.style.display = 'none'
+        // setTimeout(() => delete props.event.socket, 1000)
+      } 
+    }, 500)
+  }
+  
   if (props.event.socket) {
     const lottie = get(props.event, 'data.lottie')
     const sound = get(props.event, 'data.sound', [])
     lottieFullScreen.value = get(props.event, 'data.lottieFullScreen', false)
     
     if (sound.length) recursiveSound(sound, 0)
-    if (lottie) {
-      setTimeout(() => {
-        const elLottie = document.getElementById(lottieContainer)
-        const animation = loadAnimation({
-          container: elLottie,
-          renderer: 'svg',
-          autoplay: true,
-          path: lottie,
-          loop: false,
-        })
-        const position = document.getElementById(iconContainer).getBoundingClientRect()
-        elLottie.style.top = `${position.top}px`
-        elLottie.style.left = `calc(${position.left}px + 1.8em - 10em)`
-        animation.onComplete = () => {
-          elLottie.style.display = 'none'
-          setTimeout(() => delete props.event.socket, 1000)
-        } 
-      }, 500)
-    }
+    
+    // lottie here!
   }
 
   $emitter.on('feed:eventChangeInteractions', ({ docId, count }) => {
@@ -274,14 +278,16 @@ onMounted(() => {
       }
     }
     .lottie {
-      width: 20em;
-      position: fixed;
+      position: absolute;
+      width: 200px;
+      left: calc(-100px + 40px);
       &--fullScreen {
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw;
+        top: 0!important;
+        left: 0!important;
+        width: 100%;
         height: auto;
         z-index: 99999;
+        position: fixed;
       }
     }
     &--animate {
