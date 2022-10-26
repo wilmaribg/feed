@@ -237,7 +237,7 @@ onMounted(() => {
           elLottie.style.display = 'none'
           setTimeout(() => delete props.event.socket, 1000)
         } 
-      }, 500)
+      }, 125)
     }
   }
 
