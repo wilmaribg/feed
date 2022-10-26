@@ -7,8 +7,9 @@
       'scroll-behavior': scrollBehavior,
       'overflow-y': disableScroll ? 'hidden' : 'auto'
     }"
-    class="Infinitescroll mr-6"
+    class="Infinitescroll"
   >
+    <!-- class="Infinitescroll mr-6" -->
     <slot :smController="smController" :scrollTo="scrollTo"></slot>
   </div>
   <slot name="before"></slot>

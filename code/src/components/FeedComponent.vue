@@ -4,7 +4,7 @@
     :scroll-behavior="isLoading ? 'unset' : 'smoot'"
     :height="iHeight"
     :data="events">
-    <template #after>
+    <!-- <template #after>
       <div :id="elHeader" class="columns">
         <div class="column">
           <strong class="has-text-white mb-3 is-block">
@@ -15,14 +15,14 @@
           <PageZoomComponent />
         </div>
       </div>
-    </template>
+    </template>-->
     <template #default="{smController, scrollTo}">
       <div class="columns">
-        <div class="column my-6">
+        <div class="column my-6 has-text-centered">
           <button 
             @click="loadMore" 
             :class="{ 'is-loading': isLoading }"
-            class="button is-medium is-fullwidth"
+            class="button is-large"
           >
             Load More
           </button>
@@ -40,7 +40,7 @@
             <div class="column is-narrow">
               <Avatar animate :photo="event.data.user.photo"  width="100px" height="100px"/>
             </div>
-            <div class="column is-clipped">
+            <div class="column">
               <span class="is-size-4" style="color: var(--el-text-color-secondary);">
                 {{ moment(event.createdAt).fromNow() }}
               </span>
@@ -63,14 +63,13 @@ import Avatar from '../components/AvatarComponent'
 import Bubble from '../components/BubbleComponent'
 import { UserMe, EventsPage } from '../queries/index.js'
 import InfiniteScroll from '../components/InfiniteScrollComponent.vue'
-import PageZoomComponent from '../components/page/PageZoomComponent.vue'
 import DocViewerComponent from '../components/DocViewerComponent.vue'
 import InfiniteScrollItem from '../components/InfiniteScrollItemComponent.vue'
 
 const page = ref(0)
 const iHeight = ref(0)
 const events = ref([])
-const elHeader = uuidv4()
+// const elHeader = uuidv4()
 const unreadItems = ref({})
 const docState = ref('saved')
 const isLoading = ref(false)
@@ -83,7 +82,7 @@ const props = defineProps({
 })
 
 const calculateHeight = () => {
-  if (!document.getElementById(elHeader)) return
+  // if (!document.getElementById(elHeader)) return
   const pageComponent = document.querySelector('.Page.Feed').getBoundingClientRect().height
   const feedComponent = document.querySelector('.Infinitescroll').getBoundingClientRect().top
   iHeight.value = (pageComponent - (feedComponent + 50)) + 'px'

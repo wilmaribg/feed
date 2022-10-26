@@ -34,33 +34,47 @@
               &nbsp;View
             </el-link>
           </div>
-          <div class="column is-1 Bubble-headerActions">
-            <!-- <el-dropdown trigger="click" placement="top-end">
-              <span class="el-dropdown-link mx-2">
-                Dropdown List
-                <el-icon class="el-icon--right" color="white">
-                  <ArrowDown />
-                </el-icon>
-              </span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item @click="open(linkEdit)">
+          <div class="column is-narrow is-relative Bubble-headerActions">
+            <Dropdown>
+              <template #trigger>
+                <el-button text>
+                  <el-icon :size="20" class="Bubble-headerActionsMenu">
+                    <MoreFilled />
+                  </el-icon>
+                </el-button>
+              </template>
+              <template #content>
+                <div class="dropdown-content">
+                  <a @click="open(linkEdit)" class="is-clickable has-text-black dropdown-item">
                     <box-icon name='edit' type='solid'></box-icon>
                     &nbsp;Edit document
-                  </el-dropdown-item>
-                  <el-dropdown-item @click="deleteEvent" divided>
-                    <box-icon name='trash' type='solid'></box-icon>
-                    &nbsp;Delete event
-                  </el-dropdown-item>
-                  <el-dropdown-item @click="deleteEventSiblings" divided>
-                    <box-icon name='trash-alt' type='solid' color="hsl(348, 100%, 61%)"></box-icon>
-                    <span class="has-text-danger">
-                      &nbsp;Delete all related events
-                    </span>
-                  </el-dropdown-item>
-                </el-dropdown-menu>
+                  </a>
+                  <ConfirmComponent
+                    title="Delete event"
+                    @onAcepted="deleteEvent"
+                    message="Are you sure that you want to delete this event?"
+                  >
+                    <a class="is-clickable has-text-black dropdown-item">
+                      <box-icon name='trash' type='solid'></box-icon>
+                      &nbsp;Delete event
+                    </a>  
+                  </ConfirmComponent>
+                  <hr class="dropdown-divider">
+                  <ConfirmComponent
+                    title="Delete all related events"
+                    @onAcepted="deleteEventSiblings"
+                    message="Are you sure that you want to delete all these events?"
+                  >
+                    <a class="is-clickable has-text-black dropdown-item">
+                      <box-icon name='trash-alt' type='solid' color="hsl(348, 100%, 61%)"></box-icon>
+                      <span class="has-text-danger">
+                        &nbsp;Delete all related events
+                      </span>
+                    </a>
+                  </ConfirmComponent>
+                </div>
               </template>
-            </el-dropdown> -->
+            </Dropdown>
           </div>
         </div>
       </div>
@@ -101,10 +115,12 @@
 import { get } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 import { loadAnimation } from 'lottie-web'
-import { Edit, View, ArrowDown } from '@element-plus/icons-vue'
 import { ref, defineProps, inject, onMounted, computed } from 'vue'
-import { ElIcon, ElLink, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus'
+import { Edit, View, ArrowDown, MoreFilled } from '@element-plus/icons-vue'
+import { ElIcon, ElLink, ElButton } from 'element-plus'
 import Timeline from './TimelineComponent.vue'
+import Dropdown from './DropdownComponent.vue'
+import ConfirmComponent from './ConfirmComponent.vue'
 import { config as sdkConfig } from '../provides/sdk.js'
 import iconApproved from '../assets/icons/icn-approved.svg'
 import { EventsDelete, EventsSiblingsDelete } from '../queries/index.js'
@@ -112,6 +128,7 @@ import { EventsDelete, EventsSiblingsDelete } from '../queries/index.js'
 const id = uuidv4()
 const show = ref(false)
 const interactions = ref(0)
+const bubbleEl = ref(null)
 const iconContainer = uuidv4()
 const lottieContainer = uuidv4()
 const $emitter = inject('$emitter')
@@ -186,6 +203,7 @@ const deleteEventSiblings = async () => {
 
 
 onMounted(() => {
+  bubbleEl.value = document.getElementById(id)
   const image = get(props.event, 'data.icon', '')
   const background = get(props.event, 'data.background', '')
   const colors = get(props.event, 'data.color', '').split(',')
@@ -298,6 +316,7 @@ onMounted(() => {
       padding: var(--bubble-paddin);
     }
     &-wrapperHeader {
+      z-index: 1;
       color: var(--text-gray);
       font-weight: var(--font-medium);
       display: grid;
@@ -320,6 +339,9 @@ onMounted(() => {
     }
     &-headerActions {
       z-index: 1;
+    }
+    &-headerActionsMenu {
+      transform: rotate(90deg); 
     }
     &-bodyInfoTitle {
       font-size: 1.3em;

@@ -1,7 +1,8 @@
 <template>
   <PageComponent class="Feed">
     <template #body="{bodyHeight}">
-      <div class="ml-6 pt-5 pb-5 Feed-body">
+      <!-- <div class="ml-6 pt-5 pb-5 Feed-body"> -->
+      <div class="Feed-body">
         <div class="columns">
           <div class="column">
             <FeedComponent :height="bodyHeight" />
@@ -13,7 +14,13 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import FeedComponent from '../components/FeedComponent.vue'
+
+onMounted(() => {
+  const audio = new Audio('https://s3.console.aws.amazon.com/s3/object/cdn.nodriza.io?region=us-east-1&prefix=live-feed/sounds/intro.mp3')
+  audio.play()
+})
 </script>
 
 <style scoped lang="scss">

@@ -12,13 +12,50 @@
         <div class="navbar-menu">
           <div class="navbar-end">
             <div class="navbar-item">
-              <div class="columns">
+              <div class="columns is-vcentered">
                 <div class="column is-narrow">
                   <div class="is-size-4 has-text-right">{{ name }}</div>
                   <div class="is-size-6 has-text-right has-text-grey">{{ company }}</div>
                 </div>
                 <div class="column is-narrow">
                   <AvatarComponent :photo="imageProfile" width="65px" height="65px"/>
+                </div>
+                <div class="column is-narrow">
+                  <Dropdown class="Page-dropdown">
+                    <template #trigger>
+                      <el-button text>
+                        <el-icon :size="20" class="Page-dropdownIcon">
+                          <MoreFilled />
+                        </el-icon>
+                      </el-button>
+                    </template>
+                    <template #content>
+                      <div class="dropdown-content">
+                        <div class="has-text-right">
+                          <a class="pr-4 py-3 is-clickable has-text-black dropdown-item is-size-6 has-text-weight-bold">
+                            FILTERS
+                            &nbsp;<i class="fa fa-filter" aria-hidden="true"></i>
+                          </a>
+                          <a class="pr-4 py-3 is-clickable has-text-black dropdown-item is-size-6 has-text-weight-bold">
+                            LOGOUT
+                            &nbsp;<i class="fa fa-sign-out" aria-hidden="true"></i>
+                          </a>
+                        </div>
+                        <hr class="dropdown-divider">
+                        <div class="ml-5 pr-4">
+                          <PageZoomComponent>
+                            <template #prefix>
+                              <div class="column">
+                                <span class="is-size-6 has-text-black has-text-weight-bold">
+                                  ZOOM
+                                </span>
+                              </div>
+                            </template>
+                          </PageZoomComponent>
+                        </div>
+                      </div>
+                    </template>
+                  </Dropdown>
                 </div>
               </div>
             </div>
@@ -35,13 +72,18 @@
 <script setup>
 import { get } from 'lodash'
 import { ref, onMounted, inject } from 'vue'
+import { Edit, View, ArrowDown, MoreFilled } from '@element-plus/icons-vue'
+import { ElIcon, ElButton } from 'element-plus'
+import Dropdown from '../DropdownComponent.vue'
 import { UserMe } from '../../queries/index.js'
 import AvatarComponent from '../AvatarComponent.vue'
+import PageZoomComponent from '../page/PageZoomComponent.vue'
 
 const name = ref(null)
 const company = ref(null)
 const bodyHeight = ref(0) 
 const imageProfile = ref(null)
+const zoomHandler = inject('zoom')
 const $emitter = inject('$emitter')
 
 const setbodyHeight = () => {
@@ -51,6 +93,7 @@ const setbodyHeight = () => {
 onMounted(async () => {
   try {
     setbodyHeight()
+    zoomHandler(0.75)
     const me = await UserMe()
     name.value = get(me, 'fullName')
     company.value = get(me, 'company.name')
@@ -68,6 +111,9 @@ onMounted(async () => {
     height: 100%;
     position: fixed;
     background-color: #000000;
+    &-dropdownIcon {
+      transform: rotate(90deg);
+    }
     &-Header {
       max-height: 115px;
     }
