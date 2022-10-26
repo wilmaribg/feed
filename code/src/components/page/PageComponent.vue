@@ -74,11 +74,13 @@ import { get } from 'lodash'
 import { ref, onMounted, inject } from 'vue'
 import { Edit, View, ArrowDown, MoreFilled } from '@element-plus/icons-vue'
 import { ElIcon, ElButton } from 'element-plus'
+import { useAppStore } from '../../store/app.js'
 import Dropdown from '../DropdownComponent.vue'
 import { UserMe } from '../../queries/index.js'
 import AvatarComponent from '../AvatarComponent.vue'
 import PageZoomComponent from '../page/PageZoomComponent.vue'
 
+const appStore = useAppStore()
 const name = ref(null)
 const company = ref(null)
 const bodyHeight = ref(0) 
@@ -93,7 +95,7 @@ const setbodyHeight = () => {
 onMounted(async () => {
   try {
     setbodyHeight()
-    zoomHandler(0.75)
+    zoomHandler(appStore.zoom)
     const me = await UserMe()
     name.value = get(me, 'fullName')
     company.value = get(me, 'company.name')
