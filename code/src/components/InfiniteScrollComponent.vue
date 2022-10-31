@@ -69,30 +69,6 @@ onMounted(() => {
   const container = document.getElementById(elId)
   container.onscroll = scrollHandler
   smController.value = new Controller({ container, addIndicators: props.indicators })
-
-
-  if (props.parent) {
-    const { top, height } = document.querySelector(props.parent).getBoundingClientRect()
-    console.log(top, height)
-    console.log(container.nextElementSibling)
-    // const nextSibling = container.nextElementSibling.getBoundingClientRect().height
-    // const previousSibling = container.previousElementSibling.getBoundingClientRect().height
-    // console.log('props.parent --->', props.parent, (height - top), nextSibling, previousSibling, nextSibling, previousSibling)
-    // container.style.height = (height - top) - nextSibling - previousSibling + 'px'
-  }
-
-
-
-
-
-  // const containerTop = container.getBoundingClientRect().top
-  // container.style.height = `calc(99vh - ${containerTop}px)`
-  // $emitter.on('onChangeZoom', value => {
-  //   console.log('roge onChangeZoom ------>', value, container.getBoundingClientRect())
-  //   const containerTop = container.getBoundingClientRect().top + 50
-  //   const containerBottom = container.getBoundingClientRect().bottom + 50
-  //   container.style.height = `calc(99vh + ${containerBottom}px - ${containerTop}px)`
-  // })
 })
 </script>
 

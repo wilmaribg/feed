@@ -14,28 +14,32 @@
       }">
       <div class="Bubble-wrapperHeader">
         <div class="columns Bubble-headerUser mb-0">
-          <div class="column pb-0 is-narrow">
+          <div class="column pb-0">
             {{ $filters.fullName(event, 'data.user') }} 
             - {{ moment(event.data.createdAt).format('MMM D H:mma') }}
+          </div>
+          <!-- <div class="column pb-0 has-text-right mr-6">
+          </div> -->
+          <div class="column is-narrow is-relative Bubble-headerActions">
             <template v-if="timeline">
-              <span v-if="(event.data.interactions || interactions)">
-                • <a href="javascript:void(0)" @click="showInteractions">
+              <span v-if="(event.data.interactions || interactions)" class="mx-2">
+                <a href="javascript:void(0)" @click="showInteractions">
                   {{ interactions || event.data.interactions || 0 }} Interactions
                 </a>
               </span>
             </template>
-          </div>
-          <div class="column pb-0 has-text-right mr-6">
+            <!-- <a
+              @click="$emitter.emit('docViewer:open', linkView)"
+              class="mx-2 is-size-5 has-text-white Bubble-textActions"
+            >
+              <img :src="require('../assets/icons/icon-eye.svg')">
+            </a> -->
             <el-link 
               :icon="View" 
               @click="$emitter.emit('docViewer:open', linkView)"
-              class="mx-2 has-text-white is-hidden Bubble-textActions"
-            >
-              &nbsp;View
-            </el-link>
-          </div>
-          <div class="column is-narrow is-relative Bubble-headerActions">
-            <Dropdown>
+              class="mx-2 is-size-5 has-text-white Bubble-textActions"
+            ></el-link>
+            <Dropdown inline>
               <template #trigger>
                 <el-button text>
                   <el-icon :size="20" class="Bubble-headerActionsMenu">
@@ -46,7 +50,7 @@
               <template #content>
                 <div class="dropdown-content">
                   <a @click="open(linkEdit)" class="is-clickable has-text-black dropdown-item">
-                    <box-icon name='edit' type='solid'></box-icon>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                     &nbsp;Edit document
                   </a>
                   <ConfirmComponent
@@ -55,7 +59,7 @@
                     message="Are you sure that you want to delete this event?"
                   >
                     <a class="is-clickable has-text-black dropdown-item">
-                      <box-icon name='trash' type='solid'></box-icon>
+                      <i class="fa fa-trash-o" aria-hidden="true"></i>
                       &nbsp;Delete event
                     </a>  
                   </ConfirmComponent>
@@ -66,7 +70,7 @@
                     message="Are you sure that you want to delete all these events?"
                   >
                     <a class="is-clickable has-text-black dropdown-item">
-                      <box-icon name='trash-alt' type='solid' color="hsl(348, 100%, 61%)"></box-icon>
+                      <i class="fa fa-trash has-text-danger" aria-hidden="true"></i>
                       <span class="has-text-danger">
                         &nbsp;Delete all related events
                       </span>

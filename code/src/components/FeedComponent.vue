@@ -25,6 +25,12 @@
             class="button is-large"
           >
             Load More
+            <img 
+              v-if="!isLoading"
+              width="30" 
+              class="ml-3" 
+              :src="require('../assets/icons/icon-load-more.svg')"
+            >
           </button>
         </div>
       </div>

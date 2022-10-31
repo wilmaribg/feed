@@ -1,5 +1,10 @@
 <template>
-    <div :id="id" class="DropdownMenu" v-click-outside="onClickOutside">
+    <div 
+        :id="id" 
+        :class="{ 'is-inline': inline }"
+        class="DropdownMenu" 
+        v-click-outside="onClickOutside"
+    >
         <div  @click="handler" class="DropdownMenu-trigger">
             <slot name="trigger"></slot>
         </div>
@@ -21,6 +26,10 @@ import { v4 as uuidv4 } from 'uuid'
 const id = uuidv4()
 const status = ref(false)
 const props = defineProps({
+    inline: {
+        type: Boolean,
+        default: false
+    },
     position: {
         type: String,
         default: 'right'

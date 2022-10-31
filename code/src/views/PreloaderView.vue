@@ -23,8 +23,8 @@
               @click="accept=!accept" 
               class="button p-2 is-ghost has-text-grey-lighter is-size-4"
             >
-              <box-icon v-if="accept" size="md" type='solid' name='volume-full' color="white"/>
-              <box-icon v-else size="md" type='solid' name='volume-mute' color="white"/>
+              <i v-if="accept" class='bx bxs-volume-full'></i>
+              <i v-else class='bx bxs-volume-mute'></i>
             </button>
           </div>
         </div>

@@ -6,6 +6,7 @@ import Vue3Lottie from 'vue3-lottie'
 import vClickOutside from "click-outside-vue3"
 
 import 'bulma'
+import 'boxicons/css/boxicons.css'
 import 'font-awesome/css/font-awesome.css'
 import '@element-plus/icons-vue'
 import 'vue3-lottie/dist/style.css'
