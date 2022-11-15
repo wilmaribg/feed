@@ -23,7 +23,7 @@
                 <div class="column is-narrow">
                   <Dropdown class="Page-dropdown">
                     <template #trigger>
-                      <el-button text>
+                      <el-button link>
                         <el-icon :size="20" class="Page-dropdownIcon">
                           <MoreFilled />
                         </el-icon>

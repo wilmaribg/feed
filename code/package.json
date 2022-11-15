@@ -23,6 +23,7 @@
     "moment": "^2.29.4",
     "nodriza": "github:nodriza-io/nodriza",
     "pinia": "^2.0.22",
+    "pretty-ms": "^8.0.0",
     "sass": "^1.55.0",
     "scrollmagic": "^2.0.8",
     "socket.io-client": "^1.7.3",

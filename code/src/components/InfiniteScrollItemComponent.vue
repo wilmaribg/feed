@@ -1,5 +1,5 @@
 <template>
-  <div :id="elId" class="InfinitescrollItem">
+  <div :id="elId" class="InfinitescrollItem" :class="{ 'Bubble--animate': once && !onceComplete }">
     <slot :elSelector="elId"></slot>
   </div>
 </template>
@@ -11,12 +11,16 @@ import { ref, inject, defineProps, onMounted, defineEmits } from 'vue'
 
 const elId = uuidv4()
 const isRead = ref(false)
+const onceComplete = ref(false)
 const $emitter = inject('$emitter')
 const emit = defineEmits(['onRead'])
 const props = defineProps({
-  once: Boolean,
   event: Object,
   index: String,
+  once: {
+    type: Boolean,
+    default: true
+  },
   scrollTo: {
     type:Function,
     required: true
@@ -36,7 +40,8 @@ onMounted(() => {
     triggerElement
   })
   scene.on('enter', () => emit('onRead', { status: 'ok', uuid: elId }))
-  scene.setClassToggle(triggerElement, 'Bubble--animate')
+  if (props.once == true) setTimeout(() => onceComplete.value = true, 1000)
+  else scene.setClassToggle(triggerElement, 'Bubble--animate')
   props.smController.addScene(scene)
   props.scrollTo(null, scrollPos => {
     props.once ? scene.removeClassToggle() : null

@@ -4,18 +4,6 @@
     :scroll-behavior="isLoading ? 'unset' : 'smoot'"
     :height="iHeight"
     :data="events">
-    <!-- <template #after>
-      <div :id="elHeader" class="columns">
-        <div class="column">
-          <strong class="has-text-white mb-3 is-block">
-            Unread Items: {{Object.keys(unreadItems).length}} of {{events.length}}
-          </strong>   
-        </div>
-        <div class="column is-narrow mr-6">
-          <PageZoomComponent />
-        </div>
-      </div>
-    </template>-->
     <template #default="{smController, scrollTo}">
       <div class="columns">
         <div class="column my-6 has-text-centered">
@@ -42,17 +30,38 @@
         :smController="smController"
         :event="event">
         <template #default>
-          <div class="columns">
-            <div class="column is-narrow">
-              <Avatar animate :photo="event.data.user.photo"  width="100px" height="100px"/>
+          <template v-if="event && event.data">
+            <div class="columns">
+              <div class="column is-narrow">
+                <div>
+                  <Avatar 
+                    animate 
+                    :photo="event.data.user.photo"  
+                    width="100px" 
+                    height="100px" 
+                  />
+                </div>
+                <div 
+                  v-if="get(event, 'data.responsible.photo')" 
+                  class="is-flex is-justify-content-center"
+                  style="z-index: 1; margin-top: -1rem;" 
+                >
+                  <Avatar 
+                    animate 
+                    :photo="event.data.responsible.photo"  
+                    width="80px" 
+                    height="80px"
+                  />
+                </div>
+              </div>
+              <div class="column">
+                <span class="is-size-4" style="color: var(--el-text-color-secondary);">
+                  {{ moment(event.createdAt).fromNow() }}
+                </span>
+                <Bubble :event="event" :animate="event.animate" />
+              </div>
             </div>
-            <div class="column">
-              <span class="is-size-4" style="color: var(--el-text-color-secondary);">
-                {{ moment(event.createdAt).fromNow() }}
-              </span>
-              <Bubble :event="event" />
-            </div>
-          </div>
+          </template>
         </template>
       </InfiniteScrollItem>
     </template>
@@ -61,7 +70,7 @@
 </template>
 
 <script setup>
-import { findIndex } from 'lodash'
+import { findIndex, get } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 import { ElButton } from 'element-plus'
 import { ref, inject, onMounted, defineProps } from 'vue'
@@ -126,6 +135,20 @@ const loadMore = async () => {
   }
 }
 
+const reloadEvents = (data, index) => {
+  let id
+  const copyEvents = JSON.parse(JSON.stringify(data || []))
+  events.value = []
+  setTimeout(() => {
+    for (let i = 0; i < copyEvents.length; i++) {
+      if (i == index) id = copyEvents[i].id
+      copyEvents[i].animate = false
+      events.value.push(copyEvents[i])
+    }
+    setTimeout(() => $emitter.emit('feed:moveToEvent', id), 1)
+  }, 1)
+}
+
 onMounted(async () => {
   try {
     await loadMore()
@@ -134,16 +157,22 @@ onMounted(async () => {
     socket.on(me.id, eventBus.add)
     $emitter.on('onChangeZoom', value => calculateHeight())
     $emitter.on('bubble:deleteEvent', id => {
-      let index = findIndex(events.value, e => event.id == id)
+      let index = findIndex(events.value, e => e.id == id)
       if (index > -1) events.value.splice(index, 1)
+      reloadEvents(events.value, index - 1)
     })
     $emitter.on('bubble:deleteEventSiblings', async (docId) => {
       let i = 0
+      let index = 0
       while (i < events.value.length) {
-        if (events.value[i].docId === docId) events.value.splice(i, 1)
-        else ++i
+        if (events.value[i].docId === docId) {
+          events.value.splice(i, 1)
+          index = i
+        } else {
+          ++i
+        }
       }
-      await loadMore()
+      reloadEvents(events.value, index - 1)
     })
   } catch (err) {
     console.log(err)

@@ -19,7 +19,7 @@ const props = defineProps({
   height: [Number, String],
   fallback: {
     type: String,
-    default: () => 'https://static.remove.bg/remove-bg-web/3ad3b721d276f1af1fb7121aff638a866139749a/assets/start-1abfb4fe2980eabfbbaaa4365a0692539f7cd2725f324f904565a9a744f8e214.jpg'
+    default: () => ''
   },
 })
 </script>

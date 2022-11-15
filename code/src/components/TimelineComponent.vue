@@ -1,11 +1,9 @@
 <template>
   <el-timeline class="Timeline">
     <el-timeline-item 
-      v-for="(event, key) in $filters.sortByDate(events, 'createdAt', 1)" 
-      :key="key"
-      :timestamp="key == 0 
-        ? moment(event.createdAt).fromNow()
-        : moment(event.createdAt).from(events[0].createdAt)"
+      v-for="(event, index) in $filters.sortByDate(events, 'createdAt', 1)" 
+      :key="index"
+      :timestamp="prettyMilliseconds(moment(event.docCretatedAt).diff(event.createdAt, 'miliseconds'), { verbose: true, unitCount: 3 }) + ' after created'"
       placement="top"
       size="large">
       <BubbleComponent :event="event" :animate="true" :timeline="false" />
@@ -14,6 +12,7 @@
 </template>
 
 <script setup>
+import prettyMilliseconds from 'pretty-ms'
 import { ref, inject, defineProps, onMounted } from 'vue'
 import { ElTimeline, ElTimelineItem, } from 'element-plus'
 import { EventsSiblings } from '../queries/index.js'

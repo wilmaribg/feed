@@ -1,8 +1,10 @@
 <template>
+    v-if="visibility"
   <div 
     class="Bubble mr-6" 
     :class="{
-      'Bubble--animate': animate
+      'Bubble--animate': animate,
+      'Bubble--animate-off': animate == false
     }">
     <div 
       :id="id"
@@ -23,25 +25,30 @@
           <div class="column is-narrow is-relative Bubble-headerActions">
             <template v-if="timeline">
               <span v-if="(event.data.interactions || interactions)" class="mx-2">
-                <a href="javascript:void(0)" @click="showInteractions">
+                <a 
+                  href="javascript:void(0)" 
+                  :class="{ 
+                    'has-text-black': (bg || background) != '#000000', 
+                    'has-text-white': (bg || background) == '#000000' 
+                  }" 
+                  @click="showInteractions"
+                >
                   {{ interactions || event.data.interactions || 0 }} Interactions
                 </a>
               </span>
             </template>
-            <!-- <a
-              @click="$emitter.emit('docViewer:open', linkView)"
-              class="mx-2 is-size-5 has-text-white Bubble-textActions"
-            >
-              <img :src="require('../assets/icons/icon-eye.svg')">
-            </a> -->
             <el-link 
               :icon="View" 
               @click="$emitter.emit('docViewer:open', linkView)"
-              class="mx-2 is-size-5 has-text-white Bubble-textActions"
+              class="mx-2 is-size-5 Bubble-textActions"
+              :class="{ 
+                'has-text-black': (bg || background) != '#000000', 
+                'has-text-white': (bg || background) == '#000000' 
+              }" 
             ></el-link>
             <Dropdown inline>
               <template #trigger>
-                <el-button text>
+                <el-button link>
                   <el-icon :size="20" class="Bubble-headerActionsMenu">
                     <MoreFilled />
                   </el-icon>
@@ -139,7 +146,10 @@ const $emitter = inject('$emitter')
 const moment = inject('moment')
 const props = defineProps({
   event: Object,
-  animate: Boolean,
+  animate: {
+    type: Boolean,
+    default: true
+  },
   timeline: {
     type: Boolean,
     default: true
@@ -216,7 +226,6 @@ onMounted(() => {
   if (colors && colors[0]) titleColor.value = colors[0]
   if (colors && colors[1]) descriptionColor.value = colors[1]
   
-  
   if (props.event.socket) {
     const lottie = get(props.event, 'data.lottie')
     const sound = get(props.event, 'data.sound', [])
@@ -273,6 +282,7 @@ onMounted(() => {
     }
   }
   .Bubble {
+    overflow-x: clip !important; 
     &:hover {
       .Bubble-textActions {
         display: inline-flex !important;
@@ -294,25 +304,25 @@ onMounted(() => {
     &--animate {
       position: relative;
       overflow: hidden;
-      .Bubble-wrapper {
-        width: 100%;
-        left: -100%;
-        position: relative;
-        animation-name: Bubble-wrapper;
-        animation-duration: #{$duration}s;
-        animation-fill-mode: forwards;
-        &Header {
-          animation-delay: #{$duration}s;
-          @extend .aimation-content;
-        }
-        &Body {
-          animation-delay: #{$duration * 1.25}s;
-          @extend .aimation-content;
-        }
-        &Footer {
-          animation-delay: #{$duration * 1.5}s;
-          @extend .aimation-content;
-        }
+    }
+    &--animate  .Bubble-wrapper {
+      width: 100%;
+      left: -100%;
+      position: relative;
+      animation-name: Bubble-wrapper;
+      animation-duration: #{$duration}s;
+      animation-fill-mode: forwards;
+      &Header {
+        animation-delay: #{$duration}s;
+        @extend .aimation-content;
+      }
+      &Body {
+        animation-delay: #{$duration * 1.25}s;
+        @extend .aimation-content;
+      }
+      &Footer {
+        animation-delay: #{$duration * 1.5}s;
+        @extend .aimation-content;
       }
     }
     &-wrapper {

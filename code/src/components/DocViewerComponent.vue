@@ -6,13 +6,13 @@
     <div>
       <div class="mt-6 has-background-black Docviewer-section--boxshadow">
         <div>
-          <button @click="isOpen=false" class="button is-large is-dark is-outlined">
-            <box-icon name='x' color="white"/>
+          <button @click="isOpen=false" class="button is-fullwidth is-large is-dark is-outlined has-text-white">
+            <i class="fa fa-times" aria-hidden="true"></i>
           </button>
         </div>
         <div>
-          <a :href="url" target="__blank" class="button is-large is-dark is-outlined">
-            <box-icon name='link-external' color="white"/>
+          <a :href="url" target="__blank" class="button is-fullwidth is-large is-dark is-outlined has-text-white">
+            <i class="fa fa-external-link" aria-hidden="true"></i>
           </a>
         </div>
       </div>

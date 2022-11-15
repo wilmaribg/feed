@@ -8,7 +8,7 @@
 import { defineProps, defineEmits } from 'vue'
 import { ElMessageBox } from 'element-plus'
 
-const emits = defineEmits(['onCancel', 'onAcepted'])
+const emit = defineEmits(['onCancel', 'onAcepted'])
 const props = defineProps({
     title: {
          type: String,
@@ -38,8 +38,8 @@ const open = () => {
     cancelButtonText: 'Cancel',
     type: 'warning',
   })
-  .then(emits.onAcepted)
-  .catch(emits.onCancel)
+  .then(data => emit('onAcepted', data))
+  .catch(err => emit('onCancel', err))
 }
 </script>
 
