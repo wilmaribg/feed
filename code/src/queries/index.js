@@ -36,3 +36,18 @@ export const EventsSiblingsDelete = (docId) => new Promise((resolve, reject) => 
     resolve(docs)
   })
 })
+
+export const EventsFilters = (user) => new Promise((resolve, reject) => {
+  sdk.eventsFilter.find({ user }, (err, docs) => {
+    if (err) return reject(err)
+    if (Array.isArray(docs) && docs.length) return resolve(docs[0].filter)
+    resolve(null)
+  })
+})
+
+export const EventsFiltersSave = (user, filter) => new Promise((resolve, reject) => {
+  sdk.eventsFilter.saveFilters({ user, filter }, (err, docs) => {
+    if (err) return reject(err)
+    resolve(docs)
+  })
+})

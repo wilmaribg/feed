@@ -1,4 +1,5 @@
 <template>
+  <notifications position="bottom center"/>
   <router-view/>
 </template>
 

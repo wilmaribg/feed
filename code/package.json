@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.9",
+    "@kyvg/vue3-notification": "^2.6.1",
     "boxicons": "^2.1.4",
     "bulma": "^0.9.4",
     "click-outside-vue3": "^4.0.1",

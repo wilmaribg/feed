@@ -32,7 +32,10 @@
                     <template #content>
                       <div class="dropdown-content">
                         <div class="has-text-right">
-                          <a class="pr-4 py-3 is-clickable has-text-black dropdown-item is-size-6 has-text-weight-bold">
+                          <a 
+                            @click="$router.push('/filters')"
+                            class="pr-4 py-3 is-clickable has-text-black dropdown-item is-size-6 has-text-weight-bold"
+                          >
                             FILTERS
                             &nbsp;<i class="fa fa-filter" aria-hidden="true"></i>
                           </a>
@@ -63,7 +66,14 @@
         </div>
       </nav>
     </div>
-    <div class="Page-body">
+    <div 
+      class="Page-body" 
+      :class="{ 
+        'container': container, 
+        'is-max-desktop': desktop, 
+        'Page-body--padding': padding, 
+      }"
+    >
       <slot name="body" :bodyHeight="bodyHeight"></slot>
     </div>
   </div>
@@ -71,7 +81,7 @@
 
 <script setup>
 import { get } from 'lodash'
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted, inject, defineProps } from 'vue'
 import { Edit, View, ArrowDown, MoreFilled } from '@element-plus/icons-vue'
 import { ElIcon, ElButton } from 'element-plus'
 import { useAppStore } from '../../store/app.js'
@@ -80,13 +90,29 @@ import { UserMe } from '../../queries/index.js'
 import AvatarComponent from '../AvatarComponent.vue'
 import PageZoomComponent from '../page/PageZoomComponent.vue'
 
+const zoomHandler = inject('zoom')
+const $emitter = inject('$emitter')
 const appStore = useAppStore()
+
+const props = defineProps({
+  padding: {
+    type: Boolean,
+    default: false
+  },
+  container: {
+    type: Boolean,
+    default: false
+  },
+  desktop: {
+    type: Boolean,
+    default: false
+  } 
+})
+
 const name = ref(null)
 const company = ref(null)
 const bodyHeight = ref(0) 
 const imageProfile = ref(null)
-const zoomHandler = inject('zoom')
-const $emitter = inject('$emitter')
 
 const setbodyHeight = () => {
   bodyHeight.value = document.querySelector('.Page-body').clientHeight
@@ -131,6 +157,10 @@ onMounted(async () => {
       position: relative;
       height: calc(100% - 115px);
       background: linear-gradient(0deg, rgba(85,207,250,0.10) 40%, rgba(255,86,55,0.10) 100%);
+      &--padding {
+        padding: 16px;
+        padding: 38px;
+      }
     }
   }
 </style>

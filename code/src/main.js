@@ -3,7 +3,8 @@ import { get } from 'lodash'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import Vue3Lottie from 'vue3-lottie'
-import vClickOutside from "click-outside-vue3"
+import vClickOutside from 'click-outside-vue3'
+import Notifications from '@kyvg/vue3-notification'
 
 import 'bulma'
 import 'boxicons/css/boxicons.css'
@@ -15,8 +16,9 @@ import '@/styles/root-vars.scss'
 
 import App from '@/App.vue'
 import router from '@/router'
-import eventBus from '@/provides/eventBus'
+import notification from '@/provides/notification'
 import { sdk, socket } from '@/provides/sdk'
+import eventBus from '@/provides/eventBus'
 import zoom from '@/provides/zoom'
 import pluginEmitter from '@/provides/emitter'
 import filter from '@/filters/filter'
@@ -32,9 +34,11 @@ app.provide('moment', moment)
 app.provide('socket', socket)
 app.provide('eventBus', eventBus)
 app.provide('$emitter', pluginEmitter)
+app.provide('notification', notification)
 
 app.use(pinia)
 app.use(vClickOutside)
+app.use(Notifications)
 app.use(Vue3Lottie)  
 app.use(router)
 app.use(filter)

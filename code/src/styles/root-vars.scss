@@ -5,16 +5,12 @@
   --bubble-paddin: 15px;
   --font-medium: 500;
   --font-bold: 700;
+
+  --el-color-danger: #d21b5c;
+  --el-color-warning: #fcbc2c;
+  --el-color-primary: #4688f1;
 }
 
-// #app {
-//   transform: scale(0.75);
-//   transform-origin: 0 0;
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   right: 0;
-//   bottom: 0;
-//   width: calc(100% + 25%);
-//   height: calc(100% + 25%);
-// }
+.is-white-space-no-wrap {
+  white-space: nowrap;
+}

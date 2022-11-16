@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import PreloaderView from '@/views/PreloaderView.vue'
 import FeedView from '@/views/FeedView.vue'
+import FilterView from '@/views/FilterView.vue'
 
 const routes = [
   {
@@ -9,9 +10,16 @@ const routes = [
     component: PreloaderView
   },
   {
+    secure: true,
     path: '/feed',
     name: 'FeedView',
     component: FeedView
+  },
+  {
+    secure: true,
+    path: '/filters',
+    name: 'FilterView',
+    component: FilterView
   },
   {
     path: '/about',
