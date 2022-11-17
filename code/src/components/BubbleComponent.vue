@@ -1,5 +1,4 @@
 <template>
-    v-if="visibility"
   <div 
     class="Bubble mr-6" 
     :class="{
