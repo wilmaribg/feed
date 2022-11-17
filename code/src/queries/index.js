@@ -7,6 +7,22 @@ export const UserMe = () => new Promise((resolve, reject) => {
   })
 })
 
+export const UserSearch = (criteria) => new Promise((resolve, reject) => {
+  const query = {
+    criteria,
+    limit: 50,
+    populate: {'company':['name','type']},
+    searchFields: 'firstName,lastName,email,id',
+    selectedFields: 'firstName,lastName,email,company,avatars,id,role,status',
+    sort: 'updatedAt DESC',
+  }
+  sdk.user.search(query, (err, res) => {
+    if (err) return reject(err)
+    const { docs } = res
+    resolve(docs)
+  })
+})
+
 export const  EventsPage = (page) => new Promise((resolve, reject) => {
   const limit = 10
   const skip = page * limit

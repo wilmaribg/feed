@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 export const useAppStore = defineStore('app', {
   state: () =>({
     mute: false,
-    zoom: 0.75
+    zoom: 1
   }),
   getters: {
 

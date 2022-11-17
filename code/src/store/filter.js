@@ -20,24 +20,28 @@ export const useFilterStore = defineStore('filter', {
           label: 'Create Proposal',
           notificationWpp: false,
           notificationRaf: false,
+          users: [],
         },
         update: {
           sound: false,
           label: 'Edit Proposal',
           notificationWpp: false,
           notificationRaf: false,
+          users: [],
         },
         destroy: {
           sound: false,
           label: 'Delete Proposal',
           notificationWpp: false,
           notificationRaf: false,
+          users: [],
         },
         opened: {
           sound: false,
           label: 'View Proposal',
           notificationWpp: false,
           notificationRaf: false,
+          users: [],
         },
         draft: {
           sound: false,
@@ -45,6 +49,7 @@ export const useFilterStore = defineStore('filter', {
           notificationWpp: false,
           notificationRaf: false,
           associateMethod: 'onRating',
+          users: [],
         },
         ready: {
           sound: false,
@@ -52,6 +57,7 @@ export const useFilterStore = defineStore('filter', {
           notificationWpp: false,
           notificationRaf: false,
           associateMethod: 'onRating',
+          users: [],
         },
         warm: {
           sound: false,
@@ -59,6 +65,7 @@ export const useFilterStore = defineStore('filter', {
           notificationWpp: false,
           notificationRaf: false,
           associateMethod: 'onRating',
+          users: [],
         },
         hot: {
           sound: false,
@@ -66,18 +73,21 @@ export const useFilterStore = defineStore('filter', {
           notificationWpp: false,
           notificationRaf: false,
           associateMethod: 'onRating',
+          users: [],
         },
         setResponsible: {
           sound: false,
           label: 'New Responsible',
           notificationWpp: false,
           notificationRaf: false,
+          users: [],
         },
         onUnpublishProposal: {
           sound: false,
           label: 'Unpublished View',
           notificationWpp: false,
           notificationRaf: false,
+          users: [],
         },
       }
     }
