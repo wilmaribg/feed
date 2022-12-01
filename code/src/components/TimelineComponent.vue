@@ -3,7 +3,7 @@
     <el-timeline-item 
       v-for="(event, index) in $filters.sortByDate(events, 'createdAt', 1)" 
       :key="index"
-      :timestamp="prettyMilliseconds(moment(event.docCretatedAt).diff(event.createdAt, 'miliseconds'), { verbose: true, unitCount: 3 }) + ' after created'"
+      :timestamp="timestamp(event)"
       placement="top"
       size="large">
       <BubbleComponent :event="event" :animate="true" :timeline="false" />
@@ -24,6 +24,11 @@ const props = defineProps({
   id: String,
   docId: String,
 })
+
+const timestamp = event => {
+  const diff = moment(event.createdAt).diff(event.data.docCretatedAt, 'miliseconds')
+  return prettyMilliseconds(diff, { verbose: true, unitCount: 3 }) + ' after created'
+}
 
 onMounted(async () => {
   try {

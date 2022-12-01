@@ -158,6 +158,7 @@ const reset = async () => {
   try {
     filterStore.reset()
     const user = config.session().id
+    const userInfo = { phone: config.session().mobile || config.session().phone }
     const filter = JSON.parse(JSON.stringify(filterStore.filters))
     const res = await EventsFiltersSave(user, filter)
     notification.success(res)
@@ -168,8 +169,9 @@ const reset = async () => {
 const save = async () => {
   try {
     const user = config.session().id
+    const userInfo = { phone: config.session().mobile || config.session().phone }
     const filter = JSON.parse(JSON.stringify(filterStore.filters))
-    const res = await EventsFiltersSave(user, filter)
+    const res = await EventsFiltersSave(user, userInfo, filter)
     notification.success(res)
   } catch (err) {
     notification.error(err)
@@ -190,6 +192,7 @@ onMounted(async () => {
 .Filter {
   &-body {
     width: 100%;
+    overflow: auto;
     height: fit-content;
   }
 }
