@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 export const useFilterStore = defineStore('filter', {
   state: () =>({
     filters: {
+      wppGroupId: null,
       proposal: {
         greaterThan: {
           value: 0,
@@ -59,6 +60,22 @@ export const useFilterStore = defineStore('filter', {
           associateMethod: 'onRating',
           users: [],
         },
+        approved: {
+          sound: false,
+          label: 'Proposal is Approved',
+          notificationWpp: false,
+          notificationRaf: false,
+          associateMethod: 'onRating',
+          users: [],
+        },
+        denied: {
+          sound: false,
+          label: 'Proposal is Denied',
+          notificationWpp: false,
+          notificationRaf: false,
+          associateMethod: 'onRating',
+          users: [],
+        },
         warm: {
           sound: false,
           label: 'Proposal is Warm',
@@ -101,8 +118,10 @@ export const useFilterStore = defineStore('filter', {
       this.filters = filters
     },
     reset () {
+      this.filters.wppGroupId = null
       for (let key in this.filters.proposal) {
         if (this.filters.proposal[key].value) this.filters.proposal[key].value = 0
+        if (this.filters.proposal[key].users) this.filters.proposal[key].users = []
         if (this.filters.proposal[key].sound) this.filters.proposal[key].sound = false
         if (this.filters.proposal[key].notificationWpp) this.filters.proposal[key].notificationWpp = false
         if (this.filters.proposal[key].notificationRaf) this.filters.proposal[key].notificationRaf = false

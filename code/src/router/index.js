@@ -2,7 +2,6 @@ import { get } from 'lodash'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import PreloaderView from '@/views/PreloaderView.vue'
 import FeedView from '@/views/FeedView.vue'
-import FilterView from '@/views/FilterView.vue'
 import { config } from '@/provides/sdk.js'
 import { UserMe } from '@/queries/index.js'
 
@@ -18,12 +17,6 @@ const routes = [
     path: '/feed',
     name: 'FeedView',
     component: FeedView
-  },
-  {
-    secure: true,
-    path: '/filters',
-    name: 'FilterView',
-    component: FilterView
   },
   {
     path: '/about',

@@ -33,7 +33,7 @@
                       <div class="dropdown-content">
                         <div class="has-text-right">
                           <a 
-                            @click="$router.push('/filters')"
+                            @click="filtersModal=true"
                             class="pr-4 py-3 is-clickable has-text-black dropdown-item is-size-6 has-text-weight-bold"
                           >
                             FILTERS
@@ -75,6 +75,9 @@
       }"
     >
       <slot name="body" :bodyHeight="bodyHeight"></slot>
+      <el-dialog v-model="filtersModal" fullscreen show-close>
+        <FiltersComponent @onClose="filtersModal=false" />
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -83,11 +86,12 @@
 import { get } from 'lodash'
 import { ref, onMounted, inject, defineProps } from 'vue'
 import { Edit, View, ArrowDown, MoreFilled } from '@element-plus/icons-vue'
-import { ElIcon, ElButton } from 'element-plus'
+import { ElIcon, ElButton, ElDialog } from 'element-plus'
 import { useAppStore } from '../../store/app.js'
 import Dropdown from '../DropdownComponent.vue'
 import { UserMe } from '../../queries/index.js'
 import AvatarComponent from '../AvatarComponent.vue'
+import FiltersComponent from '../FiltersComponent.vue'
 import PageZoomComponent from '../page/PageZoomComponent.vue'
 
 const zoomHandler = inject('zoom')
@@ -113,6 +117,7 @@ const name = ref(null)
 const company = ref(null)
 const bodyHeight = ref(0) 
 const imageProfile = ref(null)
+const filtersModal = ref(false)
 
 const setbodyHeight = () => {
   bodyHeight.value = document.querySelector('.Page-body').clientHeight
