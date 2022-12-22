@@ -19,12 +19,37 @@
             Whatsapp
           </div>
         </div>
-        <pre style="color: black">{{ filterStore.filters }}</pre>
+        <div class="columns">
+          <div class="column is-size-5 has-text-weight-medium is-white-space-no-wrap">
+            <div class="has-text-weight-bold">Select All</div>
+          </div>
+          <div class="column is-2">
+            <el-switch 
+              v-model="selectAllNotificationRaf" 
+              @change="selectAllHandler('notificationRaf', selectAllNotificationRaf)"  
+              size="large"
+            />
+          </div>
+          <div class="column is-2">
+            <el-switch 
+              v-model="selectAllSound" 
+              @change="selectAllHandler('sound', selectAllSound)" 
+              size="large"
+            />
+          </div>
+          <div class="column is-4">
+            <el-switch 
+              v-model="selectAllNotificationWpp" 
+              @change="selectAllHandler('notificationWpp', selectAllNotificationWpp)"  
+              size="large"
+            />
+          </div>
+        </div>
         <template v-for="(filter, key, index) in filterStore.filters.proposal" :key="index">
           <div v-if="!/greater than|until new number/i.test(filter.label)" class="columns">
             <div class="column is-size-5 has-text-weight-medium is-white-space-no-wrap">
               <div>{{ filter.label }}</div>
-              <div @click="filter.dialogVisible = true" class="is-size-6 is-clickable">
+              <div v-if="isAllowedSelectUSers" @click="filter.dialogVisible = true" class="is-size-6 is-clickable">
                 {{ countUsers(filter) }}  Users <a>select</a>
               </div>
               <el-dialog v-model="filter.dialogVisible" width="75%">
@@ -82,13 +107,13 @@
               </el-dialog>
             </div>
             <div class="column is-2">
-              <el-switch v-model="filter.notificationRaf" size="large"/>
+              <el-switch v-model="filter.notificationRaf" @change="evaluateSelectAll('notificationRaf')" size="large"/>
             </div>
             <div class="column is-2">
-              <el-switch v-model="filter.sound" size="large"/>
+              <el-switch v-model="filter.sound" @change="evaluateSelectAll('sound')" size="large"/>
             </div>
             <div class="column is-4">
-              <el-switch v-model="filter.notificationWpp" size="large"/>
+              <el-switch v-model="filter.notificationWpp" @change="evaluateSelectAll('notificationWpp')" size="large"/>
             </div>
           </div>
         </template>
@@ -109,16 +134,18 @@
             </div>
           </div>
         </template>
-        <div class="columns mt-6">
-          <div class="column is-size-4 has-text-weight-bold">
-            Notify To Whatsapp Group
+        <template v-if="isAllowedSelectUSers">
+          <div class="columns mt-6">
+            <div class="column is-size-4 has-text-weight-bold">
+              Notify To Whatsapp Group
+            </div>
           </div>
-        </div>
-        <div class="columns">
-          <div class="column">
-            <el-input v-model="filterStore.filters.wppGroupId" placeholder="Group Id" />
+          <div class="columns">
+            <div class="column">
+              <el-input v-model="filterStore.filters.wppGroupId" placeholder="Group Id" />
+            </div>
           </div>
-        </div>
+        </template>
       </div>
     </div>
     <div class="columns">
@@ -137,7 +164,7 @@
 
 <script setup>
 import { get } from 'lodash'
-import { ref, onMounted, inject, defineEmits } from 'vue'
+import { ref, onMounted, inject, defineEmits, watch, watchEffect } from 'vue'
 import { ElSwitch, ElButton, ElInputNumber, ElDialog, ElInput } from 'element-plus'
 import { Close } from '@element-plus/icons-vue'
 import router from '../router/index.js'
@@ -149,6 +176,11 @@ import { EventsFilters, EventsFiltersSave } from '../queries/index.js'
 
 const filterStore = useFilterStore()
 const notification = inject('notification')
+const isAllowedSelectUSers = ref(false)
+
+const selectAllSound = ref(false)
+const selectAllNotificationRaf = ref(false)
+const selectAllNotificationWpp = ref(false)
 
 const emit = defineEmits(['onClose'])
 
@@ -164,11 +196,11 @@ const companyName = data => {
 const reset = async () => {
   try {
     filterStore.reset()
-    const user = config.session().id
-    const userInfo = { phone: config.session().mobile || config.session().phone }
-    const filter = JSON.parse(JSON.stringify(filterStore.filters))
-    const res = await EventsFiltersSave(user, userInfo, filter)
-    notification.success(res)
+    // const user = config.session().id
+    // const userInfo = { phone: config.session().mobile || config.session().phone }
+    // const filter = JSON.parse(JSON.stringify(filterStore.filters))
+    // const res = await EventsFiltersSave(user, userInfo, filter)
+    // notification.success(res)
   } catch (err) {
     notification.error(err)
   }
@@ -186,10 +218,44 @@ const save = async () => {
     console.log(err)
   }
 }
+
+const evaluateSelectAll = prop => {
+  let status = true
+  const keys = Object.keys(filterStore.filters.proposal)
+  for (var i = keys.length - 1; i >= 0; i--) {
+    const key = keys[i]
+    const obj = new Object(filterStore.filters.proposal[key])
+    if (!Object.prototype.hasOwnProperty.call(obj, prop)) continue
+    if (filterStore.filters.proposal[key][prop] == false) status = false
+  }
+  if (prop == 'sound') selectAllSound.value = status
+  if (prop == 'notificationRaf') selectAllNotificationRaf.value = status
+  if (prop == 'notificationWpp') selectAllNotificationWpp.value = status
+}
+
+const selectAllHandler = (prop, value) => {
+  const keys = Object.keys(filterStore.filters.proposal)
+  for (var i = keys.length - 1; i >= 0; i--) {
+    const key = keys[i]
+    const obj = new Object(filterStore.filters.proposal[key])
+    if (!Object.prototype.hasOwnProperty.call(obj, prop)) continue
+    filterStore.filters.proposal[key][prop] = value
+  } 
+} 
+
+// watch(selectAllSound, value => selectAllHandler('sound', value))
+// watch(selectAllNotificationRaf, value => selectAllHandler('notificationRaf', value))
+// watch(selectAllNotificationWpp, value => selectAllHandler('notificationWpp', value))
+
 onMounted(async () => {
   try {
+    const roles = config.roles()
     const user = config.session().id
+    isAllowedSelectUSers.value = Boolean(get(roles, 'admin', get(roles, 'raf')))
     filterStore.setFilters(await EventsFilters(user))
+    evaluateSelectAll('sound')
+    evaluateSelectAll('notificationRaf')
+    evaluateSelectAll('notificationWpp')
   } catch (err) {
     notification.error(err)
   }

@@ -45,9 +45,9 @@ const handler = () => {
     const elHeght = el.offsetHeight
     const windowHeight = window.innerHeight
     const { bottom } = el.getBoundingClientRect()
-    if ((windowHeight - bottom) < elHeght) {
-        el.style.bottom = parent.firstChild.offsetHeight + 'px'
-    }
+    // if ((windowHeight - bottom) < elHeght) {
+    //     el.style.bottom = parent.firstChild.offsetHeight + 'px'
+    // }
 }
 </script>
 

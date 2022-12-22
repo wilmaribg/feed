@@ -19,6 +19,9 @@ const config = {
   accessToken () {
     return get(this.session(), 'token.accessToken', null)
   },
+  roles () {
+    return get(this.session(), 'acl.roles', {})
+  },
   hostname () {
     if (process.env.NODE_ENV == 'development') {
       return 'dev.nodriza.io'
@@ -28,7 +31,8 @@ const config = {
   }
 }
 
-const socketInstance = io(`https://${config.hostname()}/`)
+const socketInstance = io(`https://dev.nodriza.io/`)
+// const socketInstance = io(`https://${config.hostname()}/`)
 socketInstance.on('error', (err) => console.log('❌ Socket error', err))
 socketInstance.on("disconnect", () => console.log('🔌 Socket disconnect', socketInstance))
 socketInstance.on('connect', () => {
