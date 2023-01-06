@@ -50,9 +50,9 @@
             <div class="column is-size-5 has-text-weight-medium is-white-space-no-wrap">
               <div>{{ filter.label }}</div>
               <div v-if="isAllowedSelectUSers" @click="filter.dialogVisible = true" class="is-size-6 is-clickable">
-                {{ countUsers(filter) }}  Users <a>select</a>
+                {{ countUsers(filter) }} Users <a>Selected</a>
               </div>
-              <el-dialog v-model="filter.dialogVisible" width="75%">
+              <el-dialog v-model="filter.dialogVisible" width="75%" destroy-on-close>
                 <div class="columns">
                   <div class="column is-size-4 has-text-weight-bold">
                     Listen users on <span class="is-lowercase">{{ filter.label }}</span>
@@ -99,6 +99,9 @@
                 </div>
                 <template #footer>
                   <span class="dialog-footer">
+                    <el-button @click="applyUsersToAll(filterStore.filters.proposal[key].users)" size="large" text bg>
+                      Apply config to all events
+                    </el-button>
                     <el-button @click="filter.dialogVisible=false" color="#000" :isDark="true" size="large">
                       OK
                     </el-button>
@@ -187,24 +190,23 @@ const emit = defineEmits(['onClose'])
 const countUsers = data => {
   return get(data, 'users.length', 0)
 }
+
 const fullName = data => {
   return get(data, 'firstName', '') + ' ' + get(data, 'lastName', '')
 }
+
 const companyName = data => {
   return get(data, 'company.name', get(data, 'company', ''))
 } 
+
 const reset = async () => {
   try {
     filterStore.reset()
-    // const user = config.session().id
-    // const userInfo = { phone: config.session().mobile || config.session().phone }
-    // const filter = JSON.parse(JSON.stringify(filterStore.filters))
-    // const res = await EventsFiltersSave(user, userInfo, filter)
-    // notification.success(res)
   } catch (err) {
     notification.error(err)
   }
 }
+
 const save = async () => {
   try {
     const user = config.session().id
@@ -217,6 +219,17 @@ const save = async () => {
     notification.error(err)
     console.log(err)
   }
+}
+
+const applyUsersToAll = users => {
+  const keys = Object.keys(filterStore.filters.proposal)
+  for (var i = keys.length - 1; i >= 0; i--) {
+    const key = keys[i]
+    const obj = new Object(filterStore.filters.proposal[key])
+    if (!Object.prototype.hasOwnProperty.call(obj, 'users')) continue
+    filterStore.filters.proposal[key].users = users
+  }
+  notification.success('Apply config to all events')
 }
 
 const evaluateSelectAll = prop => {
@@ -242,10 +255,6 @@ const selectAllHandler = (prop, value) => {
     filterStore.filters.proposal[key][prop] = value
   } 
 } 
-
-// watch(selectAllSound, value => selectAllHandler('sound', value))
-// watch(selectAllNotificationRaf, value => selectAllHandler('notificationRaf', value))
-// watch(selectAllNotificationWpp, value => selectAllHandler('notificationWpp', value))
 
 onMounted(async () => {
   try {

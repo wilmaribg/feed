@@ -9,6 +9,6 @@
 
 <style lang="scss">
   pre {
-    color: white;
+    color: black;
   }
 </style>

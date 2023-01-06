@@ -62,8 +62,14 @@ export const EventsFilters = (user) => new Promise((resolve, reject) => {
 })
 
 export const EventsFiltersSave = (user, userInfo, filter) => new Promise((resolve, reject) => {
+  console.log('sdk.eventsFilter ---<', sdk.eventsFilter)
   sdk.eventsFilter.saveFilters({ user, userInfo, filter }, (err, docs) => {
     if (err) return reject(err)
     resolve(docs)
   })
 })
+
+
+
+
+

@@ -1,7 +1,10 @@
 import { get } from 'lodash'
+import { io } from 'socket.io-client'
 import { Apis } from 'nodriza/src/api/index.js'
-import * as io from 'socket.io-client'
+
 import fakeSession from '../fakeSession.json'
+
+const HOST_NAME = 'dev4.nodriza.io'
 
 const config = {
   session () {
@@ -24,15 +27,15 @@ const config = {
   },
   hostname () {
     if (process.env.NODE_ENV == 'development') {
-      return 'dev.nodriza.io'
+      return HOST_NAME
     } else {
       return window.location.hostname
     }
   }
 }
 
-const socketInstance = io(`https://dev.nodriza.io/`)
-// const socketInstance = io(`https://${config.hostname()}/`)
+// const socketInstance = io(`https://${HOST_NAME}/`)
+const socketInstance = io(`https://${config.hostname()}/`)
 socketInstance.on('error', (err) => console.log('❌ Socket error', err))
 socketInstance.on("disconnect", () => console.log('🔌 Socket disconnect', socketInstance))
 socketInstance.on('connect', () => {
@@ -42,6 +45,7 @@ socketInstance.on('connect', () => {
 
 const socket = socketInstance
 const sdk = new Apis({ 
+  sessionName: 'raf',
   hostname: config.hostname(),
   accessToken: config.accessToken(), 
 })

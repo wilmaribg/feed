@@ -1,27 +1,28 @@
 <template>
+  <div class="columns">
+    <div class="column my-6 has-text-centered">
+      <button 
+        @click="loadMore" 
+        :disabled="!isEmptyResult"
+        :class="{ 'is-loading': isLoading }"
+        class="button is-large"
+      >
+        Load More
+        <img 
+          v-if="!isLoading"
+          width="30" 
+          class="ml-3" 
+          :src="require('../assets/icons/icon-load-more.svg')"
+        >
+      </button>
+    </div>
+  </div>
   <InfiniteScroll
     class="FeedComponent"
     :scroll-behavior="isLoading ? 'unset' : 'smoot'"
     :height="iHeight"
     :data="events">
     <template #default="{smController, scrollTo}">
-      <div class="columns">
-        <div class="column my-6 has-text-centered">
-          <button 
-            @click="loadMore" 
-            :class="{ 'is-loading': isLoading }"
-            class="button is-large"
-          >
-            Load More
-            <img 
-              v-if="!isLoading"
-              width="30" 
-              class="ml-3" 
-              :src="require('../assets/icons/icon-load-more.svg')"
-            >
-          </button>
-        </div>
-      </div>
       <InfiniteScrollItem 
         v-for="(event, index) in events" :key="index"
         @onRead="onReadItem"
@@ -58,7 +59,15 @@
                 <span class="is-size-4" style="color: var(--el-text-color-secondary);">
                   {{ moment(event.createdAt).fromNow() }}
                 </span>
-                <Bubble :event="event" :animate="event.animate" />
+                <Bubble 
+                  :event="event" 
+                  :icon="event.data.icon"
+                  :animate="event.animate" 
+                  :color="event.data.color || '#ffffff,#ffffff'"
+                  :background="event.data.background || '#000000'"
+                  :lottieFullScreen="event.data.lottieFullScreen || false"
+                  @onComplete="onComplete(event)" 
+                />
               </div>
             </div>
           </template>
@@ -70,9 +79,10 @@
 </template>
 
 <script setup>
-import { findIndex, get } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 import { ElButton } from 'element-plus'
+import { findIndex, get } from 'lodash'
+import { loadAnimation } from 'lottie-web'
 import { ref, inject, onMounted, defineProps } from 'vue'
 import Avatar from '../components/AvatarComponent'
 import Bubble from '../components/BubbleComponent'
@@ -88,6 +98,7 @@ const events = ref([])
 const unreadItems = ref({})
 const docState = ref('saved')
 const isLoading = ref(false)
+const isEmptyResult = ref(false)
 const disableScroll = ref(false)
 const socket = inject('socket')
 const moment = inject('moment')
@@ -108,28 +119,60 @@ const eventBus = inject('eventBus')(event => {
     docId: event.docId,
     count: event.data.interactions,
   })
-  events.value.push({ ...event, socket: true })
+  events.value.unshift({ ...event, socket: true })
+  const lottie = get(event, 'data.lottie')
+  const sounds = get(event, 'data.sound', [])
+
+  if (sounds.length) recursiveSound(sounds, 0)
+  if (lottie) {
+    const elLottie = document.getElementById(`event-lottie-${event._id}`)
+    const animation = loadAnimation({
+      container: elLottie,
+      renderer: 'svg',
+      autoplay: true,
+      path: lottie,
+      loop: false,
+    })
+    animation.onComplete = () => elLottie.remove()
+  }
 })
+
+const onComplete = event => {
+  delete event.data.sound
+  // delete event.data.lottie
+  event.animate = false
+}
 
 const onReadItem = ({ status, uuid }) => {
   if (status == 'ok') delete unreadItems.value[uuid]
   if (status == 'pending') unreadItems.value[uuid] = status
 }
 
+const recursiveSound = (sounds, index) => {
+  if (!sounds[index]) return
+  const audio = new Audio(sounds[index])
+  audio.play()
+  audio.addEventListener('ended', () => {
+    let next = index + 1
+    setTimeout(recursiveSound, 0, sounds, next)
+  })
+}
+
 const loadMore = async () => {
   try {
     isLoading.value = true
     let id 
+    const eventsCopy = events.value
     const docs = await EventsPage(page.value)
-    for (let i = 0; i < docs.length; i++) {
-      events.value.unshift({ ...docs[i], moveTo: i == 0 })
-      if (i == 0) id = docs[i].id
+    events.value = []
+    for (var i = docs.length - 1; i >= 0; i--) {
+      if (!page.value) eventsCopy.unshift(docs[i])
+      else eventsCopy.push(docs[i])
     }
+    events.value = eventsCopy
     page.value += 1
-    setTimeout(() => {
-      $emitter.emit('feed:moveToEvent', id)
-      isLoading.value = false
-    }, 500)
+    isLoading.value = false
+    isEmptyResult.value = Boolean(docs.length)
   } catch (err) {
     console.log(err)
   }

@@ -1,23 +1,25 @@
 <template>
+  <!-- <pre>{{ animate }}</pre> -->
+  <!-- :class="{
+    'Bubble--animate': animate,
+    'Bubble--animate-off': !animate
+  }" -->
   <div 
     class="Bubble mr-6" 
-    :class="{
-      'Bubble--animate': animate,
-      'Bubble--animate-off': animate == false
-    }">
+  >
     <div 
       :id="id"
       class="Bubble-wrapper" 
       :style="{ 
         'color': color,
-        'background': bg || background,
+        'background': props.background,
         'z-index': event.data.lottie ? 1 : 0
       }">
       <div class="Bubble-wrapperHeader">
         <div class="columns Bubble-headerUser mb-0">
           <div class="column pb-0">
             {{ $filters.fullName(event, 'data.user') }} 
-            - {{ moment(event.data.createdAt).format('MMM D H:mma') }}
+            - {{ moment(event.createdAt).format('MMM D H:mma') }}
           </div>
           <!-- <div class="column pb-0 has-text-right mr-6">
           </div> -->
@@ -27,8 +29,8 @@
                 <a 
                   href="javascript:void(0)" 
                   :class="{ 
-                    'has-text-black': (bg || background) != '#000000', 
-                    'has-text-white': (bg || background) == '#000000' 
+                    'has-text-black': props.background != '#000000', 
+                    'has-text-white': props.background == '#000000' 
                   }" 
                   @click="showInteractions"
                 >
@@ -41,8 +43,8 @@
               @click="$emitter.emit('docViewer:open', linkView)"
               class="mx-2 is-size-5 Bubble-textActions"
               :class="{ 
-                'has-text-black': (bg || background) != '#000000', 
-                'has-text-white': (bg || background) == '#000000' 
+                'has-text-white': /|#000000/gi.test(props.background), 
+                'has-text-black': !/|#000000/gi.test(props.background), 
               }" 
             ></el-link>
             <Dropdown inline>
@@ -92,10 +94,10 @@
         <div class="column is-narrow is-relative">
           <div 
             class="lottie" 
-            :id="lottieContainer" 
+            :id="'event-lottie-' + event._id" 
             :class="{'lottie--fullScreen': lottieFullScreen}">  
           </div>
-          <img :id="iconContainer" class="Bubble-wrapperBodyImage" :src="icon || iconApproved">
+          <img :id="'event-icon-' + event._id" class="Bubble-wrapperBodyImage" :src="icon || iconApproved">
         </div>
         <div class="Bubble-wrapperBodyInfo column">
           <div class="Bubble-bodyInfoTitle" :style="{ color: titleColor }">
@@ -124,8 +126,7 @@
 <script setup>
 import { get } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
-import { loadAnimation } from 'lottie-web'
-import { ref, defineProps, inject, onMounted, computed } from 'vue'
+import { ref, defineProps, inject, onMounted, computed, defineEmits } from 'vue'
 import { Edit, View, ArrowDown, MoreFilled } from '@element-plus/icons-vue'
 import { ElIcon, ElLink, ElButton } from 'element-plus'
 import Timeline from './TimelineComponent.vue'
@@ -135,23 +136,23 @@ import { config as sdkConfig } from '../provides/sdk.js'
 import iconApproved from '../assets/icons/icn-approved.svg'
 import { EventsDelete, EventsSiblingsDelete } from '../queries/index.js'
 
-const id = uuidv4()
-const show = ref(false)
-const interactions = ref(0)
-const bubbleEl = ref(null)
-const iconContainer = uuidv4()
-const lottieContainer = uuidv4()
 const $emitter = inject('$emitter')
 const moment = inject('moment')
+const emit = defineEmits(['onComplete'])
 const props = defineProps({
   event: Object,
+  icon: String,
   animate: {
     type: Boolean,
-    default: true
+    default: false
   },
   timeline: {
     type: Boolean,
     default: true
+  },
+  lottieFullScreen: {
+    type: Boolean,
+    default: false
   },
   color: {
     type: String,
@@ -163,14 +164,18 @@ const props = defineProps({
   },
 })
 
-const bg = ref(null)
+const id = uuidv4()
 const icon = ref(null)
+const show = ref(false)
+const bubbleEl = ref(null)
+const interactions = ref(0)
 const titleColor = ref(null)
-const lottieFullScreen = ref(false)
 const descriptionColor = ref(null)
+
 const linkView = computed(() => {
   return `https://${sdkConfig.hostname()}/v1/document/proposal/${props.event.docId}/full?source=none&rand=${new Date().getTime()}`
 })
+
 const linkEdit = computed(() => {
   return `https://${sdkConfig.hostname()}/app/documents/proposals/edit/${props.event.docId}`
 })
@@ -216,42 +221,14 @@ const deleteEventSiblings = async () => {
 
 onMounted(() => {
   bubbleEl.value = document.getElementById(id)
-  const image = get(props.event, 'data.icon', '')
-  const background = get(props.event, 'data.background', '')
-  const colors = get(props.event, 'data.color', '').split(',')
+  const image = props.icon
+  const colors = props.color.split(',')
   
   if (image) icon.value = image
-  if (background) bg.value = background
   if (colors && colors[0]) titleColor.value = colors[0]
   if (colors && colors[1]) descriptionColor.value = colors[1]
-  
-  if (props.event.socket) {
-    const lottie = get(props.event, 'data.lottie')
-    const sound = get(props.event, 'data.sound', [])
-    lottieFullScreen.value = get(props.event, 'data.lottieFullScreen', false)
-    
-    if (sound.length) recursiveSound(sound, 0)
-    
-    if (lottie) {
-      setTimeout(() => {
-        const elLottie = document.getElementById(lottieContainer)
-        const animation = loadAnimation({
-          container: elLottie,
-          renderer: 'svg',
-          autoplay: true,
-          path: lottie,
-          loop: false,
-        })
-        const position = document.getElementById(iconContainer).getBoundingClientRect()
-        // elLottie.style.top = `${position.top}px`
-        // elLottie.style.left = `calc(${position.left}px + 1.8em - 10em)`
-        animation.onComplete = () => {
-          elLottie.style.display = 'none'
-          setTimeout(() => delete props.event.socket, 1000)
-        } 
-      }, 125)
-    }
-  }
+
+  setTimeout(() => emit('onComplete'), 1000)
 
   $emitter.on('feed:eventChangeInteractions', ({ docId, count }) => {
     if (props.event.docId == docId) interactions.value = count
@@ -303,25 +280,25 @@ onMounted(() => {
     &--animate {
       position: relative;
       overflow: hidden;
-    }
-    &--animate  .Bubble-wrapper {
-      width: 100%;
-      left: -100%;
-      position: relative;
-      animation-name: Bubble-wrapper;
-      animation-duration: #{$duration}s;
-      animation-fill-mode: forwards;
-      &Header {
-        animation-delay: #{$duration}s;
-        @extend .aimation-content;
-      }
-      &Body {
-        animation-delay: #{$duration * 1.25}s;
-        @extend .aimation-content;
-      }
-      &Footer {
-        animation-delay: #{$duration * 1.5}s;
-        @extend .aimation-content;
+      .Bubble-wrapper {
+        width: 100%;
+        left: -100%;
+        position: relative;
+        animation-name: Bubble-wrapper;
+        animation-duration: #{$duration}s;
+        animation-fill-mode: forwards;
+        &Header {
+          animation-delay: #{$duration}s;
+          @extend .aimation-content;
+        }
+        &Body {
+          animation-delay: #{$duration * 1.25}s;
+          @extend .aimation-content;
+        }
+        &Footer {
+          animation-delay: #{$duration * 1.5}s;
+          @extend .aimation-content;
+        }
       }
     }
     &-wrapper {

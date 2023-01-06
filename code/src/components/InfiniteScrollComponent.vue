@@ -81,6 +81,8 @@ onMounted(() => {
   .Infinitescroll {
     opacity: .8;
     overflow-x: hidden;
+    display: flex;
+    flex-flow: column-reverse;
     scroll-behavior: smooth;
     animation-name: animate;
     animation-duration: 5s;
