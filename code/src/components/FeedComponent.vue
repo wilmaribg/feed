@@ -63,10 +63,10 @@
                   :event="event" 
                   :icon="event.data.icon"
                   :animate="event.animate" 
-                  :color="event.data.color || '#ffffff,#ffffff'"
-                  :background="event.data.background || '#000000'"
-                  :lottieFullScreen="event.data.lottieFullScreen || false"
-                  @onComplete="onComplete(event)" 
+                  :color="getColor(event)"
+                  :background="getBackground(event)"
+                  :lottieFullScreen="isLottieFullScreen(event)"
+                  @onComplete="onComplete(event)"
                 />
               </div>
             </div>
@@ -91,6 +91,9 @@ import InfiniteScroll from '../components/InfiniteScrollComponent.vue'
 import DocViewerComponent from '../components/DocViewerComponent.vue'
 import InfiniteScrollItem from '../components/InfiniteScrollItemComponent.vue'
 
+import confetti from '../assets/lotties/confetti/data.json'
+import confettiDoc from '../assets/lotties/confetti-docs/data.json'
+
 const page = ref(0)
 const iHeight = ref(0)
 const events = ref([])
@@ -107,38 +110,50 @@ const props = defineProps({
   height: Number
 })
 
+const getColor = event => event.data.color || '#ffffff'
+const getBackground = event => event.data.background || '#000000'
+const isLottieFullScreen = event => event.data.lottieFullScreen || false
+
 const calculateHeight = () => {
   // if (!document.getElementById(elHeader)) return
   const pageComponent = document.querySelector('.Page.Feed').getBoundingClientRect().height
   const feedComponent = document.querySelector('.Infinitescroll').getBoundingClientRect().top
   iHeight.value = (pageComponent - (feedComponent + 50)) + 'px'
 }
- 
+
+const srcLottie = src => {
+  if (process.env.NODE_ENV != 'development') return src
+  if (/confetti-docs/gi.test(src)) return confettiDoc
+  return confetti
+}
+
+const showLottie = (event) => {
+  const lottie = get(event, 'data.lottie')
+  const container = document.getElementById(`event-lottie-${event.id}`)
+  const lottieOptions = { container, loop: 2, autoplay: true, renderer: 'svg' }
+
+  if (!lottie || !container) return 
+  
+  if (process.env.NODE_ENV != 'development') lottieOptions['path'] = srcLottie(lottie)
+  else lottieOptions['animationData'] = srcLottie(lottie)
+  
+  const animation = loadAnimation(lottieOptions)
+  animation.onComplete = () => container.remove()
+}
+
 const eventBus = inject('eventBus')(event => {
   $emitter.emit('feed:eventChangeInteractions', {
     docId: event.docId,
     count: event.data.interactions,
   })
   events.value.unshift({ ...event, socket: true })
-  const lottie = get(event, 'data.lottie')
   const sounds = get(event, 'data.sound', [])
-
   if (sounds.length) recursiveSound(sounds, 0)
-  if (lottie) {
-    const elLottie = document.getElementById(`event-lottie-${event._id}`)
-    const animation = loadAnimation({
-      container: elLottie,
-      renderer: 'svg',
-      autoplay: true,
-      path: lottie,
-      loop: false,
-    })
-    animation.onComplete = () => elLottie.remove()
-  }
+  setTimeout(() => showLottie(event), 100)
 })
 
 const onComplete = event => {
-  delete event.data.sound
+  // delete event.data.sound
   // delete event.data.lottie
   event.animate = false
 }

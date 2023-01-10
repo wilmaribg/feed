@@ -12,7 +12,7 @@
       class="Bubble-wrapper" 
       :style="{ 
         'color': color,
-        'background': props.background,
+        'background': backgroundColor,
         'z-index': event.data.lottie ? 1 : 0
       }">
       <div class="Bubble-wrapperHeader">
@@ -29,8 +29,8 @@
                 <a 
                   href="javascript:void(0)" 
                   :class="{ 
-                    'has-text-black': props.background != '#000000', 
-                    'has-text-white': props.background == '#000000' 
+                    'has-text-black': backgroundColor != '#000000', 
+                    'has-text-white': backgroundColor == '#000000' 
                   }" 
                   @click="showInteractions"
                 >
@@ -43,8 +43,8 @@
               @click="$emitter.emit('docViewer:open', linkView)"
               class="mx-2 is-size-5 Bubble-textActions"
               :class="{ 
-                'has-text-white': /|#000000/gi.test(props.background), 
-                'has-text-black': !/|#000000/gi.test(props.background), 
+                'has-text-white': /|#000000/gi.test(backgroundColor), 
+                'has-text-black': !/|#000000/gi.test(backgroundColor), 
               }" 
             ></el-link>
             <Dropdown inline>
@@ -94,10 +94,10 @@
         <div class="column is-narrow is-relative">
           <div 
             class="lottie" 
-            :id="'event-lottie-' + event._id" 
-            :class="{'lottie--fullScreen': lottieFullScreen}">  
+            :id="'event-lottie-' + event.id" 
+            :class="{'lottie--fullScreen': isLottieFullScreen}">  
           </div>
-          <img :id="'event-icon-' + event._id" class="Bubble-wrapperBodyImage" :src="icon || iconApproved">
+          <img :id="'event-icon-' + event.id" class="Bubble-wrapperBodyImage" :src="icon || iconApproved">
         </div>
         <div class="Bubble-wrapperBodyInfo column">
           <div class="Bubble-bodyInfoTitle" :style="{ color: titleColor }">
@@ -121,6 +121,7 @@
   <div v-if="timeline" class="ml-0 mt-5">
     <Timeline v-if="show" :docId="event.docId" :id="event.id" />
   </div>
+  <!-- <pre>{{ event }}</pre> -->
 </template>
 
 <script setup>
@@ -138,10 +139,12 @@ import { EventsDelete, EventsSiblingsDelete } from '../queries/index.js'
 
 const $emitter = inject('$emitter')
 const moment = inject('moment')
-const emit = defineEmits(['onComplete'])
+const emit = defineEmits(['onComplete', 'onMounted'])
 const props = defineProps({
-  event: Object,
   icon: String,
+  event: Object,
+  color: String,
+  background: String,
   animate: {
     type: Boolean,
     default: false
@@ -154,31 +157,38 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  color: {
-    type: String,
-    default: '#ffffff'
-  },
-  background: {
-    type: String,
-    default: '#000000'
-  },
 })
 
 const id = uuidv4()
-const icon = ref(null)
 const show = ref(false)
 const bubbleEl = ref(null)
 const interactions = ref(0)
-const titleColor = ref(null)
-const descriptionColor = ref(null)
 
+const iconFile = computed(() => {
+  return props.icon
+})
+const isLottieFullScreen = computed(() => {
+  return props.lottieFullScreen
+})
+const backgroundColor = computed(() => {
+  return props.background
+})
+const titleColor = computed(() => {
+  const color = getColorTextColor()
+  return color[0]
+})
+const descriptionColor = computed(() => {
+  const color = getColorTextColor()
+  return color[1] || color[0]
+})
 const linkView = computed(() => {
   return `https://${sdkConfig.hostname()}/v1/document/proposal/${props.event.docId}/full?source=none&rand=${new Date().getTime()}`
 })
-
 const linkEdit = computed(() => {
   return `https://${sdkConfig.hostname()}/app/documents/proposals/edit/${props.event.docId}`
 })
+
+const getColorTextColor = () => props.color.split(',')
 
 const showInteractions = () => {
   show.value = !show.value
@@ -188,16 +198,6 @@ const showInteractions = () => {
 }
 
 const open = link => window.open(link) 
-
-const recursiveSound = (tracks, index) => {
-  if (!tracks[index]) return
-  const audio = new Audio(tracks[index])
-  audio.play()
-  audio.addEventListener('ended', () => {
-    let next = index + 1
-    setTimeout(recursiveSound, 100, tracks, next)
-  })
-}
 
 const deleteEvent = async () => {
   try {
@@ -219,16 +219,12 @@ const deleteEventSiblings = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   bubbleEl.value = document.getElementById(id)
-  const image = props.icon
-  const colors = props.color.split(',')
-  
-  if (image) icon.value = image
-  if (colors && colors[0]) titleColor.value = colors[0]
-  if (colors && colors[1]) descriptionColor.value = colors[1]
+  const colors = await getColorTextColor()
 
   setTimeout(() => emit('onComplete'), 1000)
+  setTimeout(() => emit('onMounted', props.event), 10)
 
   $emitter.on('feed:eventChangeInteractions', ({ docId, count }) => {
     if (props.event.docId == docId) interactions.value = count

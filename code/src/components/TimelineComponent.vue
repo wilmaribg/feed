@@ -26,7 +26,8 @@ const props = defineProps({
 })
 
 const timestamp = event => {
-  const diff = moment(event.createdAt).diff(event.data.docCretatedAt, 'miliseconds')
+  const docCretatedAt = event.data ? event.data.docCretatedAt : null
+  const diff = moment(event.createdAt).diff(docCretatedAt, 'miliseconds')
   return prettyMilliseconds(diff, { verbose: true, unitCount: 3 }) + ' after created'
 }
 

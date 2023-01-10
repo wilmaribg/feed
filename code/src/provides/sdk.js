@@ -4,7 +4,7 @@ import { Apis } from 'nodriza/src/api/index.js'
 
 import fakeSession from '../fakeSession.json'
 
-const HOST_NAME = 'dev4.nodriza.io'
+const HOST_NAME = 'dev.nodriza.io'
 
 const config = {
   session () {
@@ -34,8 +34,7 @@ const config = {
   }
 }
 
-// const socketInstance = io(`https://${HOST_NAME}/`)
-const socketInstance = io(`https://${config.hostname()}/`)
+const socketInstance = io(`https://${config.hostname()}:3001/`)
 socketInstance.on('error', (err) => console.log('❌ Socket error', err))
 socketInstance.on("disconnect", () => console.log('🔌 Socket disconnect', socketInstance))
 socketInstance.on('connect', () => {
@@ -44,6 +43,7 @@ socketInstance.on('connect', () => {
 })
 
 const socket = socketInstance
+window.sk = socket
 const sdk = new Apis({ 
   sessionName: 'raf',
   hostname: config.hostname(),
