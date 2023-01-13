@@ -130,13 +130,17 @@ const srcLottie = src => {
 const showLottie = (event) => {
   const lottie = get(event, 'data.lottie')
   const container = document.getElementById(`event-lottie-${event.id}`)
-  const lottieOptions = { container, loop: 2, autoplay: true, renderer: 'svg' }
-
+  const lottieOptions = { 
+    container, 
+    autoplay: true, 
+    renderer: 'svg',
+    loop: false, 
+  }
   if (!lottie || !container) return 
   
   if (process.env.NODE_ENV != 'development') lottieOptions['path'] = srcLottie(lottie)
   else lottieOptions['animationData'] = srcLottie(lottie)
-  
+  console.log('roge process.env.NODE_ENV ----->', process.env.NODE_ENV )
   const animation = loadAnimation(lottieOptions)
   animation.onComplete = () => container.remove()
 }

@@ -46,7 +46,7 @@ const filters = {
       label: 'Proposal in Draft',
       notificationWpp: false,
       notificationRaf: false,
-      associateMethod: 'onRating',
+      associateMethod: 'changeStatus',
       users: [],
     },
     ready: {
@@ -54,7 +54,7 @@ const filters = {
       label: 'Proposal is Ready',
       notificationWpp: false,
       notificationRaf: false,
-      associateMethod: 'onRating',
+      associateMethod: 'changeStatus',
       users: [],
     },
     approved: {
@@ -62,7 +62,7 @@ const filters = {
       label: 'Proposal is Approved',
       notificationWpp: false,
       notificationRaf: false,
-      associateMethod: 'onRating',
+      associateMethod: 'changeStatus',
       users: [],
     },
     denied: {
@@ -70,7 +70,7 @@ const filters = {
       label: 'Proposal is Denied',
       notificationWpp: false,
       notificationRaf: false,
-      associateMethod: 'onRating',
+      associateMethod: 'changeStatus',
       users: [],
     },
     warm: {
@@ -112,7 +112,12 @@ export const useFilterStore = defineStore('filter', {
   actions: {
     setFilters (data) {
       if (isEmpty(data)) return
-      console.log('roge data ---->', data)
+      // console.log('roge data ---->', data)
+      for (let key in data.proposal) {
+        const associateMethod = this.filters.proposal[key]['associateMethod']
+        if (!associateMethod) continue
+        data.proposal[key]['associateMethod'] = associateMethod
+      }
       if (data && data.proposal) data.proposal = Object.assign({}, filters.proposal, data.proposal)
       this.filters = data
     },

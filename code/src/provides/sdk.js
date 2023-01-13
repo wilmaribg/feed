@@ -4,13 +4,14 @@ import { Apis } from 'nodriza/src/api/index.js'
 
 import fakeSession from '../fakeSession.json'
 
-const HOST_NAME = 'dev.nodriza.io'
+const sessionName = 'raf'
+const hostName = 'dev.nodriza.io'
 
 const config = {
   session () {
     try {
       if (process.env.NODE_ENV == 'development') {
-        window.localStorage.setItem('session', JSON.stringify(fakeSession))
+        window.localStorage.setItem(sessionName, JSON.stringify(fakeSession))
         return fakeSession
       } else {
         return JSON.parse(window.localStorage.getItem('session'))
@@ -27,7 +28,7 @@ const config = {
   },
   hostname () {
     if (process.env.NODE_ENV == 'development') {
-      return HOST_NAME
+      return hostName
     } else {
       return window.location.hostname
     }
@@ -45,7 +46,7 @@ socketInstance.on('connect', () => {
 const socket = socketInstance
 window.sk = socket
 const sdk = new Apis({ 
-  sessionName: 'raf',
+  sessionName,
   hostname: config.hostname(),
   accessToken: config.accessToken(), 
 })

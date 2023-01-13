@@ -30,7 +30,7 @@ const routes = [
 
 const redirectToLogin = () => {
   if (process.env.NODE_ENV == 'development') {
-    window.location.replace('https://dev.nodriza.io/app/login')
+    window.location.replace(`https://${config.hostname()}/app/login`)
   } else {
     window.location.replace('/app/login')
   }
