@@ -4566,7 +4566,7 @@ node-releases@^2.0.6:
 
 "nodriza@github:nodriza-io/nodriza":
   version "1.0.15"
-  resolved "https://codeload.github.com/nodriza-io/nodriza/tar.gz/1c4402fb169cca804547905dee7a52ed7261ba81"
+  resolved "https://codeload.github.com/nodriza-io/nodriza/tar.gz/154446d959b739e89ea62d0574b92a4e7bff4f22"
   dependencies:
     "@babel/cli" "^7.15.7"
     "@babel/core" "^7.18.13"

@@ -68,6 +68,7 @@
     </div>
     <div 
       class="Page-body" 
+      :style="{ background }" 
       :class="{ 
         'container': container, 
         'is-max-desktop': desktop, 
@@ -99,6 +100,10 @@ const $emitter = inject('$emitter')
 const appStore = useAppStore()
 
 const props = defineProps({
+  background: {
+    type: String,
+    default: 'background: linear-gradient(0deg, rgba(85,207,250,0.10) 40%, rgba(255,86,55,0.10) 100%);'
+  },
   padding: {
     type: Boolean,
     default: false
@@ -161,7 +166,6 @@ onMounted(async () => {
       display: flex;
       position: relative;
       height: calc(100% - 115px);
-      background: linear-gradient(0deg, rgba(85,207,250,0.10) 40%, rgba(255,86,55,0.10) 100%);
       &--padding {
         padding: 16px;
         padding: 38px;

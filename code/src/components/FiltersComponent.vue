@@ -16,7 +16,7 @@
             Sound
           </div>
           <div class="column is-4 is-size-4 has-text-weight-bold">
-            Whatsapp
+            WhatsApp
           </div>
         </div>
         <div class="columns">
@@ -140,7 +140,7 @@
         <template v-if="isAllowedSelectUSers">
           <div class="columns mt-6">
             <div class="column is-size-4 has-text-weight-bold">
-              Notify To Whatsapp Group
+              Notify To WhatsApp Group
             </div>
           </div>
           <div class="columns">
