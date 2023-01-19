@@ -53,6 +53,13 @@ export const EventsSiblingsDelete = (docId) => new Promise((resolve, reject) => 
   })
 })
 
+export const EventsFiltersExists = () => new Promise((resolve, reject) => {
+  sdk.eventsFilter.exists((err, exists) => {
+    if (err) return reject(err)
+    resolve(exists)
+  })
+})
+
 export const EventsFilters = (user) => new Promise((resolve, reject) => {
   sdk.eventsFilter.find({ user }, (err, docs) => {
     if (err) return reject(err)

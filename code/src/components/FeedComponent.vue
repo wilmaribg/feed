@@ -1,22 +1,4 @@
 <template>
-  <div class="columns">
-    <div class="column my-6 has-text-centered">
-      <button 
-        @click="loadMore" 
-        :disabled="!isEmptyResult"
-        :class="{ 'is-loading': isLoading }"
-        class="button is-large"
-      >
-        Load More
-        <img 
-          v-if="!isLoading"
-          width="30" 
-          class="ml-3" 
-          :src="require('../assets/icons/icon-load-more.svg')"
-        >
-      </button>
-    </div>
-  </div>
   <InfiniteScroll
     class="FeedComponent"
     :scroll-behavior="isLoading ? 'unset' : 'smoot'"
@@ -73,6 +55,24 @@
           </template>
         </template>
       </InfiniteScrollItem>
+      <div class="columns">
+        <div class="column my-6 has-text-centered">
+          <button 
+            @click="loadMore" 
+            :disabled="!isEmptyResult"
+            :class="{ 'is-loading': isLoading }"
+            class="button is-large"
+          >
+            Load More
+            <img 
+              v-if="!isLoading"
+              width="30" 
+              class="ml-3" 
+              :src="require('../assets/icons/icon-load-more.svg')"
+            >
+          </button>
+        </div>
+      </div>
     </template>
   </InfiniteScroll>
   <DocViewerComponent />

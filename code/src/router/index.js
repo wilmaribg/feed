@@ -1,9 +1,10 @@
 import { get } from 'lodash'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import PreloaderView from '@/views/PreloaderView.vue'
+import FiltersView from '@/views/FiltersView.vue'
 import FeedView from '@/views/FeedView.vue'
 import { config } from '@/provides/sdk.js'
-import { UserMe } from '@/queries/index.js'
+import { UserMe, EventsFiltersExists } from '@/queries/index.js'
 
 const routes = [
   {
@@ -17,6 +18,12 @@ const routes = [
     path: '/feed',
     name: 'FeedView',
     component: FeedView
+  },
+  {
+    secure: true,
+    path: '/filters',
+    name: 'FiltersView',
+    component: FiltersView
   },
   {
     path: '/about',
@@ -36,6 +43,15 @@ const redirectToLogin = () => {
   }
 }
 
+const checkExistsFilters = async () => {
+  try {
+    return await EventsFiltersExists()
+  } catch(err) {
+    console.error('roge checkExistsFilters ---->', err)
+    return false
+  }
+}
+
 const router = createRouter({
   history: createWebHashHistory(),
   routes
@@ -46,9 +62,12 @@ router.beforeEach(async (to, from, next) => {
     const res = await UserMe()
     const home = get(res, 'home')
     if (!home) return redirectToLogin()
+    if (/preloaderView|FeedView/gi.test(to.name) && !await checkExistsFilters()) {
+      return next({ name: 'FiltersView' })
+    }
     return next() 
   } catch (err) {
-    console.log('roge err router beforeEach ---->', err)
+    console.error('roge err router beforeEach ---->', err)
     return redirectToLogin()
   }
 })
