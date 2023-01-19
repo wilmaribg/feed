@@ -7,6 +7,7 @@ import vClickOutside from 'click-outside-vue3'
 import Notifications from '@kyvg/vue3-notification'
 
 import 'bulma'
+import 'bulma-tooltip'
 import 'boxicons/css/boxicons.css'
 import 'font-awesome/css/font-awesome.css'
 import '@element-plus/icons-vue'

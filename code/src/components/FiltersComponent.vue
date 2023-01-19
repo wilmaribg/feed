@@ -32,6 +32,7 @@
           </div>
           <div class="column is-2">
             <el-switch 
+              disabled
               v-model="selectAllSound" 
               @change="selectAllHandler('sound', selectAllSound)" 
               size="large"
@@ -113,7 +114,7 @@
               <el-switch v-model="filter.notificationRaf" @change="evaluateSelectAll('notificationRaf')" size="large"/>
             </div>
             <div class="column is-2">
-              <el-switch v-model="filter.sound" @change="evaluateSelectAll('sound')" size="large"/>
+              <el-switch disabled v-model="filter.sound" @change="evaluateSelectAll('sound')" size="large"/>
             </div>
             <div class="column is-4">
               <el-switch v-model="filter.notificationWpp" @change="evaluateSelectAll('notificationWpp')" size="large"/>
@@ -202,6 +203,9 @@ const companyName = data => {
 const reset = async () => {
   try {
     filterStore.reset()
+    selectAllSound.value = false
+    selectAllNotificationRaf.value = false
+    selectAllNotificationWpp.value = false
   } catch (err) {
     notification.error(err)
   }

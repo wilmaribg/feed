@@ -20,7 +20,18 @@
           </div>
           <div class="column p-0 is-narrow">
             <button 
+              v-if="!accept"
               @click="accept=!accept" 
+              data-tooltip="Enable sounds"
+              class="button p-2 is-ghost has-text-grey-lighter is-size-4"
+            >
+              <i v-if="accept" class='bx bxs-volume-full'></i>
+              <i v-else class='bx bxs-volume-mute'></i>
+            </button>
+            <button 
+              v-else
+              @click="accept=!accept" 
+              data-tooltip="Disable sounds"
               class="button p-2 is-ghost has-text-grey-lighter is-size-4"
             >
               <i v-if="accept" class='bx bxs-volume-full'></i>
