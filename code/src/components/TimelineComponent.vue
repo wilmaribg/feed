@@ -6,7 +6,14 @@
       :timestamp="timestamp(event)"
       placement="top"
       size="large">
-      <BubbleComponent :event="event" :animate="true" :timeline="false" />
+      <BubbleComponent 
+        :event="event" 
+        :animate="true" 
+        :color="getColor(event)"
+        :background="getBackground(event)"
+        :icon="event.data.icon"
+        :timeline="false" 
+      />
     </el-timeline-item>
   </el-timeline>
 </template>
@@ -24,6 +31,9 @@ const props = defineProps({
   id: String,
   docId: String,
 })
+
+const getColor = event => event.data.color || '#ffffff'
+const getBackground = event => event.data.background || '#000000'
 
 const timestamp = event => {
   const docCretatedAt = event.data ? event.data.docCretatedAt : null

@@ -192,16 +192,13 @@ const getColorTextColor = () => props.color.split(',')
 
 const showInteractions = () => {
   show.value = !show.value
-  setTimeout(() => {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth' })
-  }, 800)
 }
 
 const open = link => window.open(link) 
 
 const deleteEvent = async () => {
   try {
-    const id = get(props.event, 'id', null)
+    const id = get(props.event, 'id', null) || get(props.event, '_id', null)
     await EventsDelete(id)
     $emitter.emit('bubble:deleteEvent', id)
   } catch (err) {

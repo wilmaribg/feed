@@ -10,26 +10,26 @@ import { ElMessageBox } from 'element-plus'
 
 const emit = defineEmits(['onCancel', 'onAcepted'])
 const props = defineProps({
-    title: {
-         type: String,
-        default: 'Title'
-    },
-    message: {
-         type: String,
-        default: 'This is a message'
-    },
-    type: {
-        type: String,
-        default: 'warning'
-    },
-    cancelButtonText: {
-        type: String,
-        default: 'Cancel'
-    },
-    confirmButtonText: {
-        type: String,
-        default: 'Ok'
-    }
+  title: {
+    type: String,
+    default: 'Title'
+  },
+  message: {
+    type: String,
+    default: 'This is a message'
+  },
+  type: {
+    type: String,
+    default: 'warning'
+  },
+  cancelButtonText: {
+    type: String,
+    default: 'Cancel'
+  },
+  confirmButtonText: {
+    type: String,
+    default: 'Ok'
+  }
 })
 
 const open = () => {
