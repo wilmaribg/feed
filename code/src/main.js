@@ -43,5 +43,7 @@ app.use(Notifications)
 app.use(Vue3Lottie)  
 app.use(router)
 app.use(filter)
+
 app.component('PageComponent', Page)
+
 app.mount('#app')

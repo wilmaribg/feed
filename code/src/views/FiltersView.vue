@@ -1,7 +1,9 @@
 <template>
   <PageComponent background="#ffffff" class="FiltersView">
-    <template #body>
-      <FiltersComponent @onClose="close" />
+    <template #body="{ bodyHeight }">
+      <div class="FiltersView-body" :style="{'min-height': bodyHeight+'px'}">
+        <FiltersComponent @onClose="close" />
+      </div>
     </template>
   </PageComponent>
 </template>
@@ -17,6 +19,11 @@ const close = () => {
 
 <style lang="scss" scoped>
 .FiltersView {
-
+  &-body {
+    width: 100%;
+    overflow: auto;
+    margin-bottom: 100px;
+    padding-bottom: 50px;
+  }
 }
 </style>
