@@ -3,19 +3,49 @@
     <div class="Page-Header">
       <nav class="navbar is-black is-spaced" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-          <a class="navbar-item" href="./#">
-            <img src="@/assets/img/black-logo-mark.svg" alt="logo" width="135" height="45">
-            <span class="Page-HeaderDivide"></span>
-            <span class="is-size-3 has-text-weight-medium">Real-time Activity Feed</span>
-          </a>
+          <div>
+            <a class="navbar-item" href="./#">
+              <img 
+                src="@/assets/img/black-logo-mark.svg" 
+                alt="logo" 
+                style="height: 90px;width: 150px;max-height: inherit;"   
+              >
+            </a>
+          </div>
+          <div class="mx-4 is-flex is-align-items-center">
+            <template v-if="isLoading">
+              <Skeletor as="div" width="113" height="100"/>
+            </template>
+            <template v-else>
+              <img v-if="subscription.enableRafPlus" src="@/assets/img/raf-basic.svg" class="Page-HeaderRaf">
+              <img v-else src="@/assets/img/raf-plus.svg" class="Page-HeaderRaf">
+            </template>
+          </div>
+          <div class="is-flex is-align-items-center">
+            <template v-if="isLoading">
+              <Skeletor width="180" height="40"/>
+            </template>
+            <template v-else>
+              <span class="has-text-grey" style="font-size: 20px; vertical-align: middle;">
+                ({{ subscription.daysLeft || 0 }} DAYS TRIAL)
+              </span>
+            </template>
+          </div>
         </div>
         <div class="navbar-menu">
           <div class="navbar-end">
             <div class="navbar-item">
               <div class="columns is-vcentered">
                 <div class="column is-narrow">
-                  <div class="is-size-4 has-text-right">{{ name }}</div>
-                  <div class="is-size-6 has-text-right has-text-grey">{{ company }}</div>
+                  <template v-if="isLoading">
+                    <Skeletor width="113" height="40"/>
+                    <br>
+                    <Skeletor width="113" height="20"/>
+                  </template>
+                  <template v-else>
+                    <div class="is-size-4 has-text-right">{{ name }}</div>
+                    <div class="is-size-6 has-text-right has-text-grey">{{ company }}</div>
+                  </template>
                 </div>
                 <div class="column is-narrow">
                   <AvatarComponent :photo="imageProfile" width="65px" height="65px"/>
@@ -85,12 +115,13 @@
 
 <script setup>
 import { get } from 'lodash'
+import { Skeletor } from 'vue-skeletor'
 import { ref, onMounted, inject, defineProps } from 'vue'
 import { Edit, View, ArrowDown, MoreFilled } from '@element-plus/icons-vue'
 import { ElIcon, ElButton, ElDialog } from 'element-plus'
 import { useAppStore } from '../../store/app.js'
 import Dropdown from '../DropdownComponent.vue'
-import { UserMe } from '../../queries/index.js'
+import { UserMe, RafPlusStatus } from '../../queries/index.js'
 import AvatarComponent from '../AvatarComponent.vue'
 import FiltersComponent from '../FiltersComponent.vue'
 import PageZoomComponent from '../page/PageZoomComponent.vue'
@@ -120,7 +151,9 @@ const props = defineProps({
 
 const name = ref(null)
 const company = ref(null)
+const isLoading = ref(true)
 const bodyHeight = ref(0) 
+const subscription = ref({})
 const imageProfile = ref(null)
 const filtersModal = ref(false)
 
@@ -133,10 +166,12 @@ onMounted(async () => {
     setbodyHeight()
     zoomHandler(appStore.zoom)
     const me = await UserMe()
+    subscription.value = await RafPlusStatus()
     name.value = get(me, 'fullName')
     company.value = get(me, 'company.name')
     imageProfile.value = get(me, 'avatars.original')
     $emitter.on('onChangeZoom', value => setbodyHeight())
+    isLoading.value = false
   } catch(err) {
     console.error(err)
   }
@@ -144,11 +179,16 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+  @import "vue-skeletor/dist/vue-skeletor.css";
   .Page {
     width: 100%;
     height: 100%;
     position: fixed;
     background-color: #000000;
+    &-HeaderRaf {
+      width: 113px;
+      height: 70px;
+    }
     &-dropdownIcon {
       transform: rotate(90deg);
     }

@@ -23,45 +23,52 @@ export const UserSearch = (criteria) => new Promise((resolve, reject) => {
   })
 })
 
-export const  EventsPage = (page) => new Promise((resolve, reject) => {
+export const RafPlusStatus = () => new Promise((resolve, reject) => {
+  sdk.event.rafPlusStatus((err, docs) => {
+    if (err) return reject(err)
+    resolve(docs)
+  })
+})
+
+export const EventsPage = (page) => new Promise((resolve, reject) => {
   const limit = 10
   const skip = page * limit
-  sdk.events.loadMore({ skip, limit }, (err, docs) => {
+  sdk.event.loadMore({ skip, limit }, (err, docs) => {
     if (err) return reject(err)
     resolve(docs)
   })
 })
 
 export const EventsSiblings = ({ id, docId }) => new Promise((resolve, reject) => {
-  sdk.events.docEvents({ id, docId }, (err, docs) => {
+  sdk.event.docEvents({ id, docId }, (err, docs) => {
     if (err) return reject(err)
     resolve(docs)
   })
 })
 
 export const EventsDelete = (id) => new Promise((resolve, reject) => {
-  sdk.events.destroy(id, (err, docs) => {
+  sdk.event.destroy(id, (err, docs) => {
     if (err) return reject(err)
     resolve(docs)
   })
 })
 
 export const EventsSiblingsDelete = (docId) => new Promise((resolve, reject) => {
-  sdk.events.destroyEventAndSiblings({ docId }, (err, docs) => {
+  sdk.event.destroyEventAndSiblings({ docId }, (err, docs) => {
     if (err) return reject(err)
     resolve(docs)
   })
 })
 
 export const EventsFiltersExists = () => new Promise((resolve, reject) => {
-  sdk.eventsFilter.exists((err, exists) => {
+  sdk.eventFilter.exists((err, exists) => {
     if (err) return reject(err)
     resolve(exists)
   })
 })
 
 export const EventsFilters = (user) => new Promise((resolve, reject) => {
-  sdk.eventsFilter.find({ user }, (err, docs) => {
+  sdk.eventFilter.find({ user }, (err, docs) => {
     if (err) return reject(err)
     if (Array.isArray(docs) && docs.length) return resolve(docs[0].filter)
     resolve(null)
@@ -69,7 +76,7 @@ export const EventsFilters = (user) => new Promise((resolve, reject) => {
 })
 
 export const EventsFiltersSave = (user, userInfo, filter) => new Promise((resolve, reject) => {
-  sdk.eventsFilter.saveFilters({ user, userInfo, filter }, (err, docs) => {
+  sdk.eventFilter.saveFilters({ user, userInfo, filter }, (err, docs) => {
     if (err) return reject(err)
     resolve(docs)
   })

@@ -55,7 +55,7 @@
           </template>
         </template>
       </InfiniteScrollItem>
-      <div class="columns">
+      <div v-if="events && events.length > 7" class="columns">
         <div class="column my-6 has-text-centered">
           <button 
             @click="loadMore" 

@@ -1,5 +1,5 @@
 <template>
-  <PageComponent class="Feed">
+  <PageComponent class="Feed" background="linear-gradient(0deg, rgba(85,207,250,0.10) 40%, rgba(255,86,55,0.10) 100%)">
     <template #body="{bodyHeight}">
       <!-- <div class="ml-6 pt-5 pb-5 Feed-body"> -->
       <div class="Feed-body ml-6">
